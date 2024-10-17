@@ -19,9 +19,12 @@ func main() {
 	sampleRepository := repositories.NewSampleRepository(db)
 	sampleService := services.NewSampleService(sampleRepository)
 	sampleController := controllers.NewSampleController(sampleService)
+	tenantRepositoru := repositories.NewTenantRepository(db)
+	tenantService := services.NewTenantService(tenantRepositoru)
+	tenantController := controllers.NewTenantController(tenantService)
 
 	// Configurar as rotas
-	router := routes.SetupRouter(sampleController)
+	router := routes.SetupRouter(sampleController, tenantController)
 
 	// swagger
 	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
