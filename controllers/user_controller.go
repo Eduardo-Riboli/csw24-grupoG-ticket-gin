@@ -5,29 +5,29 @@ import (
     "strconv"
 
     "github.com/gin-gonic/gin"
-    entities "github.com/grupoG/csw24-grupoG-ticket-gin/entities/tenant"
+    entities "github.com/grupoG/csw24-grupoG-ticket-gin/entities/user"
     "github.com/grupoG/csw24-grupoG-ticket-gin/services"
     "github.com/grupoG/csw24-grupoG-ticket-gin/utils"
 )
 
-type TenantController struct {
-    Service *services.TenantService
+type UserController struct {
+    Service *services.UserService
 }
 
-func NewTenantController(service *services.TenantService) *TenantController {
-    return &TenantController{Service: service}
+func NewUserController(service *services.UserService) *UserController {
+    return &UserController{Service: service}
 }
 
-func (ctrl *TenantController) GetAllTenants(c *gin.Context) {
-    tenants, err := ctrl.Service.GetAllTenants()
+func (ctrl *UserController) GetAllUsers(c *gin.Context) {
+    users, err := ctrl.Service.GetAllUsers()
     if err != nil {
         utils.ErrorResponse(c, http.StatusInternalServerError, err.Error())
         return
     }
-    c.JSON(http.StatusOK, tenants)
+    c.JSON(http.StatusOK, users)
 }
 
-func (controller *TenantController) GetTenantByID(c *gin.Context) {
+func (ctrl *UserController) GetUserByID(c *gin.Context) {
     idParam := c.Param("id")
     id, err := strconv.Atoi(idParam)
     if err != nil {
@@ -35,30 +35,30 @@ func (controller *TenantController) GetTenantByID(c *gin.Context) {
         return
     }
 
-    tenant, err := controller.Service.GetTenantByID(uint(id))
+    user, err := ctrl.Service.GetUserByID(uint(id))
     if err != nil {
-        c.JSON(http.StatusNotFound, gin.H{"error": "Tenant not found"})
+        c.JSON(http.StatusNotFound, gin.H{"error": "User not found"})
         return
     }
 
-    c.JSON(http.StatusOK, tenant)
+    c.JSON(http.StatusOK, user)
 }
 
-func (ctrl *TenantController) CreateTenant(c *gin.Context) {
-    var tenantRequest entities.TenantCrRequest
-    if err := c.ShouldBindJSON(&tenantRequest); err != nil {
+func (ctrl *UserController) CreateUser(c *gin.Context) {
+    var userRequest entities.UserCrRequest
+    if err := c.ShouldBindJSON(&userRequest); err != nil {
         utils.ErrorResponse(c, http.StatusBadRequest, err.Error())
         return
     }
-    newTenant, err := ctrl.Service.CreateTenant(tenantRequest)
+    newUser, err := ctrl.Service.CreateUser(userRequest)
     if err != nil {
         utils.ErrorResponse(c, http.StatusInternalServerError, err.Error())
         return
     }
-    c.JSON(http.StatusCreated, newTenant)
+    c.JSON(http.StatusCreated, newUser)
 }
 
-func (ctrl *TenantController) UpdateTenant(c *gin.Context) {
+func (ctrl *UserController) UpdateUser(c *gin.Context) {
     idParam := c.Param("id")
     id, err := strconv.Atoi(idParam)
     if err != nil {
@@ -66,21 +66,21 @@ func (ctrl *TenantController) UpdateTenant(c *gin.Context) {
         return
     }
 
-	var tenantRequest entities.TenantUpRequest
-    if err := c.ShouldBindJSON(&tenantRequest); err != nil {
+    var userRequest entities.UserUpRequest
+    if err := c.ShouldBindJSON(&userRequest); err != nil {
         utils.ErrorResponse(c, http.StatusBadRequest, err.Error())
         return
     }
 
-    updatedTenant, err := ctrl.Service.UpdateTenant(uint(id), tenantRequest)
+    updatedUser, err := ctrl.Service.UpdateUser(uint(id), userRequest)
     if err != nil {
         utils.ErrorResponse(c, http.StatusInternalServerError, err.Error())
         return
     }
-    c.JSON(http.StatusOK, updatedTenant)
+    c.JSON(http.StatusOK, updatedUser)
 }
 
-func (ctrl *TenantController) DeleteTenant(c *gin.Context) {
+func (ctrl *UserController) DeleteUser(c *gin.Context) {
     idParam := c.Param("id")
     id, err := strconv.Atoi(idParam)
     if err != nil {
@@ -88,7 +88,7 @@ func (ctrl *TenantController) DeleteTenant(c *gin.Context) {
         return
     }
 
-    if err := ctrl.Service.DeleteTenant(uint(id)); err != nil {
+    if err := ctrl.Service.DeleteUser(uint(id)); err != nil {
         utils.ErrorResponse(c, http.StatusInternalServerError, err.Error())
         return
     }

@@ -5,29 +5,29 @@ import (
     "strconv"
 
     "github.com/gin-gonic/gin"
-    entities "github.com/grupoG/csw24-grupoG-ticket-gin/entities/tenant"
+    entities "github.com/grupoG/csw24-grupoG-ticket-gin/entities/ticket"
     "github.com/grupoG/csw24-grupoG-ticket-gin/services"
     "github.com/grupoG/csw24-grupoG-ticket-gin/utils"
 )
 
-type TenantController struct {
-    Service *services.TenantService
+type TicketController struct {
+    Service *services.TicketService
 }
 
-func NewTenantController(service *services.TenantService) *TenantController {
-    return &TenantController{Service: service}
+func NewTicketController(service *services.TicketService) *TicketController {
+    return &TicketController{Service: service}
 }
 
-func (ctrl *TenantController) GetAllTenants(c *gin.Context) {
-    tenants, err := ctrl.Service.GetAllTenants()
+func (ctrl *TicketController) GetAllTickets(c *gin.Context) {
+    tickets, err := ctrl.Service.GetAllTickets()
     if err != nil {
         utils.ErrorResponse(c, http.StatusInternalServerError, err.Error())
         return
     }
-    c.JSON(http.StatusOK, tenants)
+    c.JSON(http.StatusOK, tickets)
 }
 
-func (controller *TenantController) GetTenantByID(c *gin.Context) {
+func (ctrl *TicketController) GetTicketByID(c *gin.Context) {
     idParam := c.Param("id")
     id, err := strconv.Atoi(idParam)
     if err != nil {
@@ -35,30 +35,30 @@ func (controller *TenantController) GetTenantByID(c *gin.Context) {
         return
     }
 
-    tenant, err := controller.Service.GetTenantByID(uint(id))
+    ticket, err := ctrl.Service.GetTicketByID(uint(id))
     if err != nil {
-        c.JSON(http.StatusNotFound, gin.H{"error": "Tenant not found"})
+        c.JSON(http.StatusNotFound, gin.H{"error": "Ticket not found"})
         return
     }
 
-    c.JSON(http.StatusOK, tenant)
+    c.JSON(http.StatusOK, ticket)
 }
 
-func (ctrl *TenantController) CreateTenant(c *gin.Context) {
-    var tenantRequest entities.TenantCrRequest
-    if err := c.ShouldBindJSON(&tenantRequest); err != nil {
+func (ctrl *TicketController) CreateTicket(c *gin.Context) {
+    var ticketRequest entities.TicketCrRequest
+    if err := c.ShouldBindJSON(&ticketRequest); err != nil {
         utils.ErrorResponse(c, http.StatusBadRequest, err.Error())
         return
     }
-    newTenant, err := ctrl.Service.CreateTenant(tenantRequest)
+    newTicket, err := ctrl.Service.CreateTicket(ticketRequest)
     if err != nil {
         utils.ErrorResponse(c, http.StatusInternalServerError, err.Error())
         return
     }
-    c.JSON(http.StatusCreated, newTenant)
+    c.JSON(http.StatusCreated, newTicket)
 }
 
-func (ctrl *TenantController) UpdateTenant(c *gin.Context) {
+func (ctrl *TicketController) UpdateTicket(c *gin.Context) {
     idParam := c.Param("id")
     id, err := strconv.Atoi(idParam)
     if err != nil {
@@ -66,21 +66,21 @@ func (ctrl *TenantController) UpdateTenant(c *gin.Context) {
         return
     }
 
-	var tenantRequest entities.TenantUpRequest
-    if err := c.ShouldBindJSON(&tenantRequest); err != nil {
+    var ticketRequest entities.TicketUpRequest
+    if err := c.ShouldBindJSON(&ticketRequest); err != nil {
         utils.ErrorResponse(c, http.StatusBadRequest, err.Error())
         return
     }
 
-    updatedTenant, err := ctrl.Service.UpdateTenant(uint(id), tenantRequest)
+    updatedTicket, err := ctrl.Service.UpdateTicket(uint(id), ticketRequest)
     if err != nil {
         utils.ErrorResponse(c, http.StatusInternalServerError, err.Error())
         return
     }
-    c.JSON(http.StatusOK, updatedTenant)
+    c.JSON(http.StatusOK, updatedTicket)
 }
 
-func (ctrl *TenantController) DeleteTenant(c *gin.Context) {
+func (ctrl *TicketController) DeleteTicket(c *gin.Context) {
     idParam := c.Param("id")
     id, err := strconv.Atoi(idParam)
     if err != nil {
@@ -88,7 +88,7 @@ func (ctrl *TenantController) DeleteTenant(c *gin.Context) {
         return
     }
 
-    if err := ctrl.Service.DeleteTenant(uint(id)); err != nil {
+    if err := ctrl.Service.DeleteTicket(uint(id)); err != nil {
         utils.ErrorResponse(c, http.StatusInternalServerError, err.Error())
         return
     }

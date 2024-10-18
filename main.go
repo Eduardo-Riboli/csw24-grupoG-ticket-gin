@@ -19,12 +19,34 @@ func main() {
 	sampleRepository := repositories.NewSampleRepository(db)
 	sampleService := services.NewSampleService(sampleRepository)
 	sampleController := controllers.NewSampleController(sampleService)
-	tenantRepositoru := repositories.NewTenantRepository(db)
-	tenantService := services.NewTenantService(tenantRepositoru)
+	tenantRepository := repositories.NewTenantRepository(db)
+	tenantService := services.NewTenantService(tenantRepository)
 	tenantController := controllers.NewTenantController(tenantService)
+	userRepository := repositories.NewUserRepository(db)
+	userService := services.NewUserService(userRepository)
+	userController := controllers.NewUserController(userService)
+	eventRepository := repositories.NewEventRepository(db)
+	eventService := services.NewEventService(eventRepository)
+	eventController := controllers.NewEventController(eventService)
+	ticketRepository := repositories.NewTicketRepository(db)
+	ticketService := services.NewTicketService(ticketRepository)
+	ticketController := controllers.NewTicketController(ticketService)
+	transactionRepository := repositories.NewTransactionRepository(db)
+	transactionService := services.NewTransactionService(transactionRepository)
+	transactionController := controllers.NewTransactionController(transactionService)
+	notificationPreferencesRepository := repositories.NewNotificationPreferencesRepository(db)
+	notificationPreferencesService := services.NewNotificationPreferencesService(notificationPreferencesRepository)
+	notificationPreferencesController := controllers.NewNotificationPreferencesController(notificationPreferencesService)
+
 
 	// Configurar as rotas
-	router := routes.SetupRouter(sampleController, tenantController)
+	router := routes.SetupRouter(sampleController, 
+		tenantController, 
+		userController, 
+		eventController, 
+		ticketController, 
+		transactionController, 
+		notificationPreferencesController)
 
 	// swagger
 	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))

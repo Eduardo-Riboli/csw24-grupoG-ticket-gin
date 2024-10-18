@@ -5,29 +5,29 @@ import (
     "strconv"
 
     "github.com/gin-gonic/gin"
-    entities "github.com/grupoG/csw24-grupoG-ticket-gin/entities/tenant"
+    entities "github.com/grupoG/csw24-grupoG-ticket-gin/entities/event"
     "github.com/grupoG/csw24-grupoG-ticket-gin/services"
     "github.com/grupoG/csw24-grupoG-ticket-gin/utils"
 )
 
-type TenantController struct {
-    Service *services.TenantService
+type EventController struct {
+    Service *services.EventService
 }
 
-func NewTenantController(service *services.TenantService) *TenantController {
-    return &TenantController{Service: service}
+func NewEventController(service *services.EventService) *EventController {
+    return &EventController{Service: service}
 }
 
-func (ctrl *TenantController) GetAllTenants(c *gin.Context) {
-    tenants, err := ctrl.Service.GetAllTenants()
+func (ctrl *EventController) GetAllEvents(c *gin.Context) {
+    events, err := ctrl.Service.GetAllEvents()
     if err != nil {
         utils.ErrorResponse(c, http.StatusInternalServerError, err.Error())
         return
     }
-    c.JSON(http.StatusOK, tenants)
+    c.JSON(http.StatusOK, events)
 }
 
-func (controller *TenantController) GetTenantByID(c *gin.Context) {
+func (ctrl *EventController) GetEventByID(c *gin.Context) {
     idParam := c.Param("id")
     id, err := strconv.Atoi(idParam)
     if err != nil {
@@ -35,30 +35,30 @@ func (controller *TenantController) GetTenantByID(c *gin.Context) {
         return
     }
 
-    tenant, err := controller.Service.GetTenantByID(uint(id))
+    event, err := ctrl.Service.GetEventByID(uint(id))
     if err != nil {
-        c.JSON(http.StatusNotFound, gin.H{"error": "Tenant not found"})
+        c.JSON(http.StatusNotFound, gin.H{"error": "Event not found"})
         return
     }
 
-    c.JSON(http.StatusOK, tenant)
+    c.JSON(http.StatusOK, event)
 }
 
-func (ctrl *TenantController) CreateTenant(c *gin.Context) {
-    var tenantRequest entities.TenantCrRequest
-    if err := c.ShouldBindJSON(&tenantRequest); err != nil {
+func (ctrl *EventController) CreateEvent(c *gin.Context) {
+    var eventRequest entities.EventCrRequest
+    if err := c.ShouldBindJSON(&eventRequest); err != nil {
         utils.ErrorResponse(c, http.StatusBadRequest, err.Error())
         return
     }
-    newTenant, err := ctrl.Service.CreateTenant(tenantRequest)
+    newEvent, err := ctrl.Service.CreateEvent(eventRequest)
     if err != nil {
         utils.ErrorResponse(c, http.StatusInternalServerError, err.Error())
         return
     }
-    c.JSON(http.StatusCreated, newTenant)
+    c.JSON(http.StatusCreated, newEvent)
 }
 
-func (ctrl *TenantController) UpdateTenant(c *gin.Context) {
+func (ctrl *EventController) UpdateEvent(c *gin.Context) {
     idParam := c.Param("id")
     id, err := strconv.Atoi(idParam)
     if err != nil {
@@ -66,21 +66,21 @@ func (ctrl *TenantController) UpdateTenant(c *gin.Context) {
         return
     }
 
-	var tenantRequest entities.TenantUpRequest
-    if err := c.ShouldBindJSON(&tenantRequest); err != nil {
+    var eventRequest entities.EventUpRequest
+    if err := c.ShouldBindJSON(&eventRequest); err != nil {
         utils.ErrorResponse(c, http.StatusBadRequest, err.Error())
         return
     }
 
-    updatedTenant, err := ctrl.Service.UpdateTenant(uint(id), tenantRequest)
+    updatedEvent, err := ctrl.Service.UpdateEvent(uint(id), eventRequest)
     if err != nil {
         utils.ErrorResponse(c, http.StatusInternalServerError, err.Error())
         return
     }
-    c.JSON(http.StatusOK, updatedTenant)
+    c.JSON(http.StatusOK, updatedEvent)
 }
 
-func (ctrl *TenantController) DeleteTenant(c *gin.Context) {
+func (ctrl *EventController) DeleteEvent(c *gin.Context) {
     idParam := c.Param("id")
     id, err := strconv.Atoi(idParam)
     if err != nil {
@@ -88,7 +88,7 @@ func (ctrl *TenantController) DeleteTenant(c *gin.Context) {
         return
     }
 
-    if err := ctrl.Service.DeleteTenant(uint(id)); err != nil {
+    if err := ctrl.Service.DeleteEvent(uint(id)); err != nil {
         utils.ErrorResponse(c, http.StatusInternalServerError, err.Error())
         return
     }
