@@ -34,9 +34,19 @@ func main() {
 	transactionRepository := repositories.NewTransactionRepository(db)
 	transactionService := services.NewTransactionService(transactionRepository)
 	transactionController := controllers.NewTransactionController(transactionService)
+	notificationPreferencesRepository := repositories.NewNotificationPreferencesRepository(db)
+	notificationPreferencesService := services.NewNotificationPreferencesService(notificationPreferencesRepository)
+	notificationPreferencesController := controllers.NewNotificationPreferencesController(notificationPreferencesService)
+
 
 	// Configurar as rotas
-	router := routes.SetupRouter(sampleController, tenantController, userController, eventController, ticketController, transactionController)
+	router := routes.SetupRouter(sampleController, 
+		tenantController, 
+		userController, 
+		eventController, 
+		ticketController, 
+		transactionController, 
+		notificationPreferencesController)
 
 	// swagger
 	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))

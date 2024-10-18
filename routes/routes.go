@@ -12,6 +12,7 @@ func SetupRouter(
 	eventController *controllers.EventController,
 	ticketController *controllers.TicketController,
 	transactionController *controllers.TransactionController,
+	notificationPreferencesController *controllers.NotificationPreferencesController,
 ) *gin.Engine {
 	router := gin.Default()
 
@@ -44,6 +45,11 @@ func SetupRouter(
 		api.POST("/transactions", transactionController.CreateTransaction)
 		api.PUT("/transactions/:id", transactionController.UpdateTransaction)
 		api.DELETE("/transactions/:id", transactionController.DeleteTransaction)
+		api.GET("/notification-preferences", notificationPreferencesController.GetAllPreferences)
+		api.GET("/notification-preferences/:id", notificationPreferencesController.GetPreferenceByID)
+		api.POST("/notification-preferences", notificationPreferencesController.CreatePreference)
+		api.PUT("/notification-preferences/:id", notificationPreferencesController.UpdatePreference)
+		api.DELETE("/notification-preferences/:id", notificationPreferencesController.DeletePreference)
 	}
 
 	return router
