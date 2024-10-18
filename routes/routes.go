@@ -19,6 +19,8 @@ func SetupRouter(
 		api.GET("/tenants", tenantController.GetAllTenants)
 		api.GET("/tenants/:id", tenantController.GetTenantByID)
 		api.POST("/tenants", tenantController.CreateTenant)
+		api.PUT("/tenants/:id", tenantController.UpdateTenant)
+		api.DELETE("/tenants/:id", tenantController.DeleteTenant)
 		api.GET("/users", userController.GetAllUsers)
 		api.GET("/users/:id", userController.GetUserByID)
 		api.POST("/users", userController.CreateUser)

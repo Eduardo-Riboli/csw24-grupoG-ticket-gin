@@ -35,3 +35,17 @@ func (r *TenantRepository) Create(tenant models.Tenant) (models.Tenant, error) {
 	}
 	return tenant, nil
 }
+
+func (r *TenantRepository) Update(tenant models.Tenant) (models.Tenant, error) {
+    if err := r.DB.Save(&tenant).Error; err != nil {
+        return models.Tenant{}, err
+    }
+    return tenant, nil
+}
+
+func (r *TenantRepository) Delete(id uint) error {
+    if err := r.DB.Delete(&models.Tenant{}, id).Error; err != nil {
+        return err
+    }
+    return nil
+}

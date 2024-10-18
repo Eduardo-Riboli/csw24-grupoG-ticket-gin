@@ -1,59 +1,96 @@
 package controllers
 
 import (
-	"net/http"
-	"strconv"
+    "net/http"
+    "strconv"
 
-	"github.com/gin-gonic/gin"
-	entities "github.com/grupoG/csw24-grupoG-ticket-gin/entities/tenant"
-	"github.com/grupoG/csw24-grupoG-ticket-gin/services"
-	"github.com/grupoG/csw24-grupoG-ticket-gin/utils"
+    "github.com/gin-gonic/gin"
+    entities "github.com/grupoG/csw24-grupoG-ticket-gin/entities/tenant"
+    "github.com/grupoG/csw24-grupoG-ticket-gin/services"
+    "github.com/grupoG/csw24-grupoG-ticket-gin/utils"
 )
 
 type TenantController struct {
-	Service *services.TenantService
+    Service *services.TenantService
 }
 
 func NewTenantController(service *services.TenantService) *TenantController {
-	return &TenantController{Service: service}
+    return &TenantController{Service: service}
 }
 
 func (ctrl *TenantController) GetAllTenants(c *gin.Context) {
-	tenants, err := ctrl.Service.GetAllTenants()
-	if err != nil {
-		utils.ErrorResponse(c, http.StatusInternalServerError, err.Error())
-		return
-	}
-	c.JSON(http.StatusOK, tenants)
+    tenants, err := ctrl.Service.GetAllTenants()
+    if err != nil {
+        utils.ErrorResponse(c, http.StatusInternalServerError, err.Error())
+        return
+    }
+    c.JSON(http.StatusOK, tenants)
 }
 
 func (controller *TenantController) GetTenantByID(c *gin.Context) {
-	idParam := c.Param("id")
-	id, err := strconv.Atoi(idParam)
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid ID"})
-		return
-	}
+    idParam := c.Param("id")
+    id, err := strconv.Atoi(idParam)
+    if err != nil {
+        c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid ID"})
+        return
+    }
 
-	tenant, err := controller.Service.GetTenantByID(uint(id))
-	if err != nil {
-		c.JSON(http.StatusNotFound, gin.H{"error": "Tenant not found"})
-		return
-	}
+    tenant, err := controller.Service.GetTenantByID(uint(id))
+    if err != nil {
+        c.JSON(http.StatusNotFound, gin.H{"error": "Tenant not found"})
+        return
+    }
 
-	c.JSON(http.StatusOK, tenant)
+    c.JSON(http.StatusOK, tenant)
 }
 
 func (ctrl *TenantController) CreateTenant(c *gin.Context) {
-	var tenantRequest entities.TenantRequest
-	if err := c.ShouldBindJSON(&tenantRequest); err != nil {
-		utils.ErrorResponse(c, http.StatusBadRequest, err.Error())
-		return
-	}
-	newTenant, err := ctrl.Service.CreateTenant(tenantRequest)
-	if err != nil {
-		utils.ErrorResponse(c, http.StatusInternalServerError, err.Error())
-		return
-	}
-	c.JSON(http.StatusCreated, newTenant)
+    var tenantRequest entities.TenantCrRequest
+    if err := c.ShouldBindJSON(&tenantRequest); err != nil {
+        utils.ErrorResponse(c, http.StatusBadRequest, err.Error())
+        return
+    }
+    newTenant, err := ctrl.Service.CreateTenant(tenantRequest)
+    if err != nil {
+        utils.ErrorResponse(c, http.StatusInternalServerError, err.Error())
+        return
+    }
+    c.JSON(http.StatusCreated, newTenant)
+}
+
+func (ctrl *TenantController) UpdateTenant(c *gin.Context) {
+    idParam := c.Param("id")
+    id, err := strconv.Atoi(idParam)
+    if err != nil {
+        c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid ID"})
+        return
+    }
+
+	var tenantRequest entities.TenantUpRequest
+    if err := c.ShouldBindJSON(&tenantRequest); err != nil {
+        utils.ErrorResponse(c, http.StatusBadRequest, err.Error())
+        return
+    }
+
+    updatedTenant, err := ctrl.Service.UpdateTenant(uint(id), tenantRequest)
+    if err != nil {
+        utils.ErrorResponse(c, http.StatusInternalServerError, err.Error())
+        return
+    }
+    c.JSON(http.StatusOK, updatedTenant)
+}
+
+func (ctrl *TenantController) DeleteTenant(c *gin.Context) {
+    idParam := c.Param("id")
+    id, err := strconv.Atoi(idParam)
+    if err != nil {
+        c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid ID"})
+        return
+    }
+
+    if err := ctrl.Service.DeleteTenant(uint(id)); err != nil {
+        utils.ErrorResponse(c, http.StatusInternalServerError, err.Error())
+        return
+    }
+    c.JSON(http.StatusNoContent, nil)
 }
