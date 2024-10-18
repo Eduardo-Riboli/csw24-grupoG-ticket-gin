@@ -11,6 +11,7 @@ func SetupRouter(
 	userController *controllers.UserController,
 	eventController *controllers.EventController,
 	ticketController *controllers.TicketController,
+	transactionController *controllers.TransactionController,
 ) *gin.Engine {
 	router := gin.Default()
 
@@ -38,6 +39,11 @@ func SetupRouter(
 		api.POST("/tickets", ticketController.CreateTicket)
 		api.PUT("/tickets/:id", ticketController.UpdateTicket)
 		api.DELETE("/tickets/:id", ticketController.DeleteTicket)
+		api.GET("/transactions", transactionController.GetAllTransactions)
+		api.GET("/transactions/:id", transactionController.GetTransactionByID)
+		api.POST("/transactions", transactionController.CreateTransaction)
+		api.PUT("/transactions/:id", transactionController.UpdateTransaction)
+		api.DELETE("/transactions/:id", transactionController.DeleteTransaction)
 	}
 
 	return router
