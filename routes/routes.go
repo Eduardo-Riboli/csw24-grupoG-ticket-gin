@@ -9,6 +9,7 @@ func SetupRouter(
 	sampleController *controllers.SampleController,
 	tenantController *controllers.TenantController,
 	userController *controllers.UserController,
+	eventController *controllers.EventController,
 ) *gin.Engine {
 	router := gin.Default()
 
@@ -26,6 +27,11 @@ func SetupRouter(
 		api.POST("/users", userController.CreateUser)
 		api.PUT("/users/:id", userController.UpdateUser)
 		api.DELETE("/users/:id", userController.DeleteUser)
+		api.GET("/events", eventController.GetAllEvents)
+		api.GET("/events/:id", eventController.GetEventByID)
+		api.POST("/events", eventController.CreateEvent)
+		api.PUT("/events/:id", eventController.UpdateEvent)
+		api.DELETE("/events/:id", eventController.DeleteEvent)
 	}
 
 	return router
