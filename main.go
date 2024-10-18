@@ -28,9 +28,12 @@ func main() {
 	eventRepository := repositories.NewEventRepository(db)
 	eventService := services.NewEventService(eventRepository)
 	eventController := controllers.NewEventController(eventService)
+	ticketRepository := repositories.NewTicketRepository(db)
+	ticketService := services.NewTicketService(ticketRepository)
+	ticketController := controllers.NewTicketController(ticketService)
 
 	// Configurar as rotas
-	router := routes.SetupRouter(sampleController, tenantController, userController, eventController)
+	router := routes.SetupRouter(sampleController, tenantController, userController, eventController, ticketController)
 
 	// swagger
 	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))

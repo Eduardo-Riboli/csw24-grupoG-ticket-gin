@@ -10,6 +10,7 @@ func SetupRouter(
 	tenantController *controllers.TenantController,
 	userController *controllers.UserController,
 	eventController *controllers.EventController,
+	ticketController *controllers.TicketController,
 ) *gin.Engine {
 	router := gin.Default()
 
@@ -32,6 +33,11 @@ func SetupRouter(
 		api.POST("/events", eventController.CreateEvent)
 		api.PUT("/events/:id", eventController.UpdateEvent)
 		api.DELETE("/events/:id", eventController.DeleteEvent)
+		api.GET("/tickets", ticketController.GetAllTickets)
+		api.GET("/tickets/:id", ticketController.GetTicketByID)
+		api.POST("/tickets", ticketController.CreateTicket)
+		api.PUT("/tickets/:id", ticketController.UpdateTicket)
+		api.DELETE("/tickets/:id", ticketController.DeleteTicket)
 	}
 
 	return router

@@ -3,7 +3,6 @@ package configs
 import (
 	"fmt"
 	"log"
-	"time"
 
 	"github.com/grupoG/csw24-grupoG-ticket-gin/models"
 	"gorm.io/driver/postgres"
@@ -40,9 +39,6 @@ func SetupDatabase() *gorm.DB {
 	if err != nil {
 		log.Fatal("Falha ao migrar o schema:", err)
 	}
-
-	// Inserir dados iniciais
-	createInitialData(db)
 
 	return db
 }
