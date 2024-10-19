@@ -12,14 +12,6 @@ Trabalho da disciplina de construção de software da PUCRS 2024/2
 
 ## Como rodar
 
-### Sem docker
-
-```bash
-go run main.go
-```
-
-### Com docker v2
-
 ```bash
 # rodar uma vez só para buildar os containers
 docker-compose up --build
@@ -44,23 +36,49 @@ docker-compose ps -a
 docker-compose stop
 ```
 
-### Com docker
+## Infraestrutura
+
+1 - Adicionar as credenciais da aws no arquivo ~/.aws/credentials
+
+OBS: toda vez que ligamos o lab, as credenciais mudam, chatão
+
+2 - Rodar o comando para iniciar o terraform:
 
 ```bash
-csw24-grupoG-ticket-gin % docker build -t csw24-grupog-ticket-gin-we .```
-
-```bash
-docker run -d -p 8080:8080 --name ticket-gin-container csw24-grupog-ticket-gin-we
+terraform init
 ```
 
-OBS: Para erro "go mod tidy", rodar os seguintes comandos
+3 - Explicar o plano de criação do terraform com:
 
 ```bash
-go mod download
-
-go mod tidy
-go mod download
+terraform plan
 ```
+
+4 - Subir a infraestrutura na aws
+
+```bash
+terraform apply
+```
+
+5 - Uma vez dado terraform apply, o terraform irá gerar uma chave ssh, essa chave é unica de pessoa para pessoa, se o fulano rodar terraform apply e o ciclano também, ambos terão duas chaves ssh diferentes. A chave ssh pode ser acessada rodando os seguintes comandos
+
+```bash
+terraform output -raw private_key_pem > my-key.pem
+```
+
+após isso, um arquivo `.pem` será criado no diretório de `/infra`, esse arquivo é sua chave ssh que você poderá usar para se conectar na sua instância de EC2 criada na AWS. Para fazer isso, rode os seguintes comandos:
+
+```bash
+# Adiciona regras de segurança para chave ssh
+chmod 400 my-key.pem
+```
+
+```bash
+# Substitua  <EC2_PUBLIC_IP> pelo ip público da sua EC2 recém criada
+ssh -i my-key.pem <EC2_PUBLIC_IP>
+```
+
+OBS: Muito cuidado para não perder o arquivo .pem!
 
 ## Data model
 
@@ -72,7 +90,7 @@ go mod download
 - [ X ] Criar estrutura das pastas/arquitetura
 - [ X ] Instalar uma ORM com um banco de dados
 - [ X ] Instalar o Swagger
-- [  ] Criar todas as entities do datamodel com a ORM de Go
+- [ X ] Criar todas as entities do datamodel com a ORM de Go
 - [  ] [Criar endpoint do useCase 1: Compra de ingresso](https://github.com/tecmx/csw242-system-docs/blob/main/UseCases.md#1-compra-de-ingresso) 
 - [  ] [Criar endpoint do useCase 2: Venda de ingresso](https://github.com/tecmx/csw242-system-docs/blob/main/UseCases.md#2-venda-de-ingresso)
 - [  ] [Criar endpoint do useCase 3: Gerenciamento de Eventos (Administrador)](https://github.com/tecmx/csw242-system-docs/blob/main/UseCases.md#3-gerenciamento-de-eventos-administrador)
@@ -81,17 +99,9 @@ go mod download
 - [  ] [Criar endpoint do useCase 6: Reembolso de Ingresso](https://github.com/tecmx/csw242-system-docs/blob/main/UseCases.md#6-reembolso-de-ingresso)
 - [  ] [Criar endpoint do useCase 7: Envio de Avaliação do Vendedor](https://github.com/tecmx/csw242-system-docs/blob/main/UseCases.md#7-envio-de-avalia%C3%A7%C3%A3o-do-vendedor)
 - [  ] [Criar endpoint do useCase 8: Visualização de Avaliações do Vendedor](https://github.com/tecmx/csw242-system-docs/blob/main/UseCases.md#8-visualiza%C3%A7%C3%A3o-de-avalia%C3%A7%C3%B5es-do-vendedor)
-- [  ] Instalar o Docker e fazer rodar tudo no local
+- [ X ] Instalar o Docker e fazer rodar tudo no local
 - [  ] Rodando local, mudamos para um banco de dados na nuvem, para melhor escalabilidade (Tinhamos combinado que seria o RDS da AWS)
 - [  ] Conectamos nossa aplicação com Docker à esse banco na nuvem e nos certificamos que esteja tudo rodando 
-- [  ] Criar a infraestrutura da AWS com o Terraform
-- [  ] Subir a aplicação na AWS
+- [ X ] Criar a infraestrutura da AWS com o Terraform
+- [ X ] Subir a aplicação na AWS
 - [  ] Ser feliz
-
-
-# importante e to com preguiça de colocar bonitnho
-
-terraform output -raw private_key_pem > my-key.pem
-chmod 400 my-key.pem
-cat my-key.pem
-ssh -i my-key.pem ec2-user@<EC2_PUBLIC_IP>
