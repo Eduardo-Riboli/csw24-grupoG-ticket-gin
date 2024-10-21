@@ -18,7 +18,8 @@ func SetupDatabase() *gorm.DB {
 	port := "5432"
 
 	// String de conexão
-	dsn := fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=%s sslmode=disable", host, user, password, dbname, port)
+	dsn := fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=%s sslmode=require", host, user, password, dbname, port)
+
 
 	// Conectando ao banco de dados
 	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
