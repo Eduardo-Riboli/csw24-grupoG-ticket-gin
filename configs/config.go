@@ -11,10 +11,10 @@ import (
 
 // Função para configurar e migrar o banco de dados
 func SetupDatabase() *gorm.DB {
-	host := "postgresdb"
+	host := "database-teste-old.cttyfnhps03u.us-east-1.rds.amazonaws.com"
 	user := "postgres"
 	password := "postgres"
-	dbname := "mydb"
+	dbname := "teste"
 	port := "5432"
 
 	// String de conexão
