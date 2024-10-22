@@ -18,6 +18,14 @@ func NewUserController(service *services.UserService) *UserController {
     return &UserController{Service: service}
 }
 
+// GetAllUsers godoc
+// @Summary Get all users
+// @Description Get a list of all users
+// @Tags users
+// @Produce json
+// @Success 200 {array} entities.User
+// @Failure 500 {object} utils.ErrorResponse
+// @Router /users [get]
 func (ctrl *UserController) GetAllUsers(c *gin.Context) {
     users, err := ctrl.Service.GetAllUsers()
     if err != nil {
@@ -27,6 +35,16 @@ func (ctrl *UserController) GetAllUsers(c *gin.Context) {
     c.JSON(http.StatusOK, users)
 }
 
+// GetUserByID godoc
+// @Summary Get user by ID
+// @Description Get details of a specific user by ID
+// @Tags users
+// @Produce json
+// @Param id path int true "User ID"
+// @Success 200 {object} entities.User
+// @Failure 400 {object} utils.ErrorResponse
+// @Failure 404 {object} utils.ErrorResponse
+// @Router /users/{id} [get]
 func (ctrl *UserController) GetUserByID(c *gin.Context) {
     idParam := c.Param("id")
     id, err := strconv.Atoi(idParam)
@@ -44,6 +62,17 @@ func (ctrl *UserController) GetUserByID(c *gin.Context) {
     c.JSON(http.StatusOK, user)
 }
 
+// CreateUser godoc
+// @Summary Create a new user
+// @Description Create a new user with the given details
+// @Tags users
+// @Accept json
+// @Produce json
+// @Param user body entities.UserCrRequest true "User request body"
+// @Success 201 {object} entities.User
+// @Failure 400 {object} utils.ErrorResponse
+// @Failure 500 {object} utils.ErrorResponse
+// @Router /users [post]
 func (ctrl *UserController) CreateUser(c *gin.Context) {
     var userRequest entities.UserCrRequest
     if err := c.ShouldBindJSON(&userRequest); err != nil {
@@ -58,6 +87,18 @@ func (ctrl *UserController) CreateUser(c *gin.Context) {
     c.JSON(http.StatusCreated, newUser)
 }
 
+// UpdateUser godoc
+// @Summary Update a user
+// @Description Update details of an existing user by ID
+// @Tags users
+// @Accept json
+// @Produce json
+// @Param id path int true "User ID"
+// @Param user body entities.UserUpRequest true "User request body"
+// @Success 200 {object} entities.User
+// @Failure 400 {object} utils.ErrorResponse
+// @Failure 500 {object} utils.ErrorResponse
+// @Router /users/{id} [put]
 func (ctrl *UserController) UpdateUser(c *gin.Context) {
     idParam := c.Param("id")
     id, err := strconv.Atoi(idParam)
@@ -80,6 +121,16 @@ func (ctrl *UserController) UpdateUser(c *gin.Context) {
     c.JSON(http.StatusOK, updatedUser)
 }
 
+// DeleteUser godoc
+// @Summary Delete a user
+// @Description Delete a user by ID
+// @Tags users
+// @Produce json
+// @Param id path int true "User ID"
+// @Success 204 {object} nil
+// @Failure 400 {object} utils.ErrorResponse
+// @Failure 500 {object} utils.ErrorResponse
+// @Router /users/{id} [delete]
 func (ctrl *UserController) DeleteUser(c *gin.Context) {
     idParam := c.Param("id")
     id, err := strconv.Atoi(idParam)

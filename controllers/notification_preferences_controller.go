@@ -18,6 +18,14 @@ func NewNotificationPreferencesController(service *services.NotificationPreferen
     return &NotificationPreferencesController{Service: service}
 }
 
+// GetAllPreferences godoc
+// @Summary Get all notification preferences
+// @Description Get a list of all notification preferences
+// @Tags notification_preferences
+// @Produce json
+// @Success 200 {array} entities.NotificationPreferences
+// @Failure 500 {object} utils.ErrorResponse
+// @Router /preferences [get]
 func (ctrl *NotificationPreferencesController) GetAllPreferences(c *gin.Context) {
     preferences, err := ctrl.Service.GetAllPreferences()
     if err != nil {
@@ -27,6 +35,16 @@ func (ctrl *NotificationPreferencesController) GetAllPreferences(c *gin.Context)
     c.JSON(http.StatusOK, preferences)
 }
 
+// GetPreferenceByID godoc
+// @Summary Get notification preference by ID
+// @Description Get details of a specific notification preference by ID
+// @Tags notification_preferences
+// @Produce json
+// @Param id path int true "Preference ID"
+// @Success 200 {object} entities.NotificationPreferences
+// @Failure 400 {object} utils.ErrorResponse
+// @Failure 404 {object} utils.ErrorResponse
+// @Router /preferences/{id} [get]
 func (ctrl *NotificationPreferencesController) GetPreferenceByID(c *gin.Context) {
     idParam := c.Param("id")
     id, err := strconv.Atoi(idParam)
@@ -44,6 +62,17 @@ func (ctrl *NotificationPreferencesController) GetPreferenceByID(c *gin.Context)
     c.JSON(http.StatusOK, preference)
 }
 
+// CreatePreference godoc
+// @Summary Create a new notification preference
+// @Description Create a new notification preference with the given details
+// @Tags notification_preferences
+// @Accept json
+// @Produce json
+// @Param preference body entities.NotificationPreferencesCrRequest true "Preference request body"
+// @Success 201 {object} entities.NotificationPreferences
+// @Failure 400 {object} utils.ErrorResponse
+// @Failure 500 {object} utils.ErrorResponse
+// @Router /preferences [post]
 func (ctrl *NotificationPreferencesController) CreatePreference(c *gin.Context) {
     var request entities.NotificationPreferencesCrRequest
     if err := c.ShouldBindJSON(&request); err != nil {
@@ -58,6 +87,18 @@ func (ctrl *NotificationPreferencesController) CreatePreference(c *gin.Context) 
     c.JSON(http.StatusCreated, newPreference)
 }
 
+// UpdatePreference godoc
+// @Summary Update a notification preference
+// @Description Update details of an existing notification preference by ID
+// @Tags notification_preferences
+// @Accept json
+// @Produce json
+// @Param id path int true "Preference ID"
+// @Param preference body entities.NotificationPreferencesUpRequest true "Preference request body"
+// @Success 200 {object} entities.NotificationPreferences
+// @Failure 400 {object} utils.ErrorResponse
+// @Failure 500 {object} utils.ErrorResponse
+// @Router /preferences/{id} [put]
 func (ctrl *NotificationPreferencesController) UpdatePreference(c *gin.Context) {
     idParam := c.Param("id")
     id, err := strconv.Atoi(idParam)
@@ -80,6 +121,16 @@ func (ctrl *NotificationPreferencesController) UpdatePreference(c *gin.Context) 
     c.JSON(http.StatusOK, updatedPreference)
 }
 
+// DeletePreference godoc
+// @Summary Delete a notification preference
+// @Description Delete a notification preference by ID
+// @Tags notification_preferences
+// @Produce json
+// @Param id path int true "Preference ID"
+// @Success 204 {object} nil
+// @Failure 400 {object} utils.ErrorResponse
+// @Failure 500 {object} utils.ErrorResponse
+// @Router /preferences/{id} [delete]
 func (ctrl *NotificationPreferencesController) DeletePreference(c *gin.Context) {
     idParam := c.Param("id")
     id, err := strconv.Atoi(idParam)

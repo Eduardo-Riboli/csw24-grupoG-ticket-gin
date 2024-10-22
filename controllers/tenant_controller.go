@@ -18,6 +18,14 @@ func NewTenantController(service *services.TenantService) *TenantController {
     return &TenantController{Service: service}
 }
 
+// GetAllTenants godoc
+// @Summary Get all tenants
+// @Description Get a list of all tenants
+// @Tags tenants
+// @Produce json
+// @Success 200 {array} entities.Tenant
+// @Failure 500 {object} utils.ErrorResponse
+// @Router /tenants [get]
 func (ctrl *TenantController) GetAllTenants(c *gin.Context) {
     tenants, err := ctrl.Service.GetAllTenants()
     if err != nil {
@@ -27,6 +35,16 @@ func (ctrl *TenantController) GetAllTenants(c *gin.Context) {
     c.JSON(http.StatusOK, tenants)
 }
 
+// GetTenantByID godoc
+// @Summary Get tenant by ID
+// @Description Get details of a specific tenant by ID
+// @Tags tenants
+// @Produce json
+// @Param id path int true "Tenant ID"
+// @Success 200 {object} entities.Tenant
+// @Failure 400 {object} utils.ErrorResponse
+// @Failure 404 {object} utils.ErrorResponse
+// @Router /tenants/{id} [get]
 func (controller *TenantController) GetTenantByID(c *gin.Context) {
     idParam := c.Param("id")
     id, err := strconv.Atoi(idParam)
@@ -44,6 +62,17 @@ func (controller *TenantController) GetTenantByID(c *gin.Context) {
     c.JSON(http.StatusOK, tenant)
 }
 
+// CreateTenant godoc
+// @Summary Create a new tenant
+// @Description Create a new tenant with the given details
+// @Tags tenants
+// @Accept json
+// @Produce json
+// @Param tenant body entities.TenantCrRequest true "Tenant request body"
+// @Success 201 {object} entities.Tenant
+// @Failure 400 {object} utils.ErrorResponse
+// @Failure 500 {object} utils.ErrorResponse
+// @Router /tenants [post]
 func (ctrl *TenantController) CreateTenant(c *gin.Context) {
     var tenantRequest entities.TenantCrRequest
     if err := c.ShouldBindJSON(&tenantRequest); err != nil {
@@ -58,6 +87,18 @@ func (ctrl *TenantController) CreateTenant(c *gin.Context) {
     c.JSON(http.StatusCreated, newTenant)
 }
 
+// UpdateTenant godoc
+// @Summary Update a tenant
+// @Description Update details of an existing tenant by ID
+// @Tags tenants
+// @Accept json
+// @Produce json
+// @Param id path int true "Tenant ID"
+// @Param tenant body entities.TenantUpRequest true "Tenant request body"
+// @Success 200 {object} entities.Tenant
+// @Failure 400 {object} utils.ErrorResponse
+// @Failure 500 {object} utils.ErrorResponse
+// @Router /tenants/{id} [put]
 func (ctrl *TenantController) UpdateTenant(c *gin.Context) {
     idParam := c.Param("id")
     id, err := strconv.Atoi(idParam)
@@ -66,7 +107,7 @@ func (ctrl *TenantController) UpdateTenant(c *gin.Context) {
         return
     }
 
-	var tenantRequest entities.TenantUpRequest
+    var tenantRequest entities.TenantUpRequest
     if err := c.ShouldBindJSON(&tenantRequest); err != nil {
         utils.ErrorResponse(c, http.StatusBadRequest, err.Error())
         return
@@ -80,6 +121,16 @@ func (ctrl *TenantController) UpdateTenant(c *gin.Context) {
     c.JSON(http.StatusOK, updatedTenant)
 }
 
+// DeleteTenant godoc
+// @Summary Delete a tenant
+// @Description Delete a tenant by ID
+// @Tags tenants
+// @Produce json
+// @Param id path int true "Tenant ID"
+// @Success 204 {object} nil
+// @Failure 400 {object} utils.ErrorResponse
+// @Failure 500 {object} utils.ErrorResponse
+// @Router /tenants/{id} [delete]
 func (ctrl *TenantController) DeleteTenant(c *gin.Context) {
     idParam := c.Param("id")
     id, err := strconv.Atoi(idParam)

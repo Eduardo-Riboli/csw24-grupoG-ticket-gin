@@ -18,6 +18,14 @@ func NewTransactionController(service *services.TransactionService) *Transaction
     return &TransactionController{Service: service}
 }
 
+// GetAllTransactions godoc
+// @Summary Get all transactions
+// @Description Get a list of all transactions
+// @Tags transactions
+// @Produce json
+// @Success 200 {array} entities.Transaction
+// @Failure 500 {object} utils.ErrorResponse
+// @Router /transactions [get]
 func (ctrl *TransactionController) GetAllTransactions(c *gin.Context) {
     transactions, err := ctrl.Service.GetAllTransactions()
     if err != nil {
@@ -27,6 +35,16 @@ func (ctrl *TransactionController) GetAllTransactions(c *gin.Context) {
     c.JSON(http.StatusOK, transactions)
 }
 
+// GetTransactionByID godoc
+// @Summary Get transaction by ID
+// @Description Get details of a specific transaction by ID
+// @Tags transactions
+// @Produce json
+// @Param id path int true "Transaction ID"
+// @Success 200 {object} entities.Transaction
+// @Failure 400 {object} utils.ErrorResponse
+// @Failure 404 {object} utils.ErrorResponse
+// @Router /transactions/{id} [get]
 func (ctrl *TransactionController) GetTransactionByID(c *gin.Context) {
     idParam := c.Param("id")
     id, err := strconv.Atoi(idParam)
@@ -44,6 +62,17 @@ func (ctrl *TransactionController) GetTransactionByID(c *gin.Context) {
     c.JSON(http.StatusOK, transaction)
 }
 
+// CreateTransaction godoc
+// @Summary Create a new transaction
+// @Description Create a new transaction with the given details
+// @Tags transactions
+// @Accept json
+// @Produce json
+// @Param transaction body entities.TransactionCrRequest true "Transaction request body"
+// @Success 201 {object} entities.Transaction
+// @Failure 400 {object} utils.ErrorResponse
+// @Failure 500 {object} utils.ErrorResponse
+// @Router /transactions [post]
 func (ctrl *TransactionController) CreateTransaction(c *gin.Context) {
     var transactionRequest entities.TransactionCrRequest
     if err := c.ShouldBindJSON(&transactionRequest); err != nil {
@@ -58,6 +87,18 @@ func (ctrl *TransactionController) CreateTransaction(c *gin.Context) {
     c.JSON(http.StatusCreated, newTransaction)
 }
 
+// UpdateTransaction godoc
+// @Summary Update a transaction
+// @Description Update details of an existing transaction by ID
+// @Tags transactions
+// @Accept json
+// @Produce json
+// @Param id path int true "Transaction ID"
+// @Param transaction body entities.TransactionUpRequest true "Transaction request body"
+// @Success 200 {object} entities.Transaction
+// @Failure 400 {object} utils.ErrorResponse
+// @Failure 500 {object} utils.ErrorResponse
+// @Router /transactions/{id} [put]
 func (ctrl *TransactionController) UpdateTransaction(c *gin.Context) {
     idParam := c.Param("id")
     id, err := strconv.Atoi(idParam)
@@ -80,6 +121,16 @@ func (ctrl *TransactionController) UpdateTransaction(c *gin.Context) {
     c.JSON(http.StatusOK, updatedTransaction)
 }
 
+// DeleteTransaction godoc
+// @Summary Delete a transaction
+// @Description Delete a transaction by ID
+// @Tags transactions
+// @Produce json
+// @Param id path int true "Transaction ID"
+// @Success 204 {object} nil
+// @Failure 400 {object} utils.ErrorResponse
+// @Failure 500 {object} utils.ErrorResponse
+// @Router /transactions/{id} [delete]
 func (ctrl *TransactionController) DeleteTransaction(c *gin.Context) {
     idParam := c.Param("id")
     id, err := strconv.Atoi(idParam)
