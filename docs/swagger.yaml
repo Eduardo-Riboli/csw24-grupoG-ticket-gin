@@ -1,4 +1,1140 @@
+definitions:
+  entities.EventCrRequest:
+    properties:
+      date:
+        type: string
+      location:
+        maxLength: 255
+        type: string
+      name:
+        maxLength: 100
+        type: string
+      tenant_id:
+        type: integer
+    required:
+    - date
+    - location
+    - name
+    - tenant_id
+    type: object
+  entities.EventResponse:
+    properties:
+      date:
+        type: string
+      id:
+        type: integer
+      location:
+        type: string
+      name:
+        type: string
+      tenant_id:
+        type: integer
+    type: object
+  entities.NotificationPreferencesCrRequest:
+    properties:
+      receive_emails:
+        type: boolean
+      user_id:
+        type: integer
+    required:
+    - receive_emails
+    - user_id
+    type: object
+  entities.NotificationPreferencesResponse:
+    properties:
+      id:
+        type: integer
+      receive_emails:
+        type: boolean
+      user_id:
+        type: integer
+    type: object
+  entities.NotificationPreferencesUpRequest:
+    properties:
+      receive_emails:
+        type: boolean
+    type: object
+  entities.TenantCrRequest:
+    properties:
+      contact_info:
+        maxLength: 255
+        type: string
+      name:
+        maxLength: 100
+        type: string
+      specific_configurations:
+        maxLength: 255
+        type: string
+    required:
+    - name
+    type: object
+  entities.TenantResponse:
+    properties:
+      contact_info:
+        type: string
+      id:
+        type: integer
+      name:
+        type: string
+      specific_configurations:
+        type: string
+    type: object
+  entities.TenantUpRequest:
+    properties:
+      contact_info:
+        maxLength: 255
+        type: string
+      name:
+        maxLength: 100
+        type: string
+      specific_configurations:
+        maxLength: 255
+        type: string
+    type: object
+  entities.TicketCrRequest:
+    properties:
+      event_id:
+        type: integer
+      original_price:
+        type: number
+      seller_id:
+        type: integer
+      status:
+        maxLength: 50
+        type: string
+      tenant_id:
+        type: integer
+      verification_code:
+        maxLength: 100
+        type: string
+    required:
+    - event_id
+    - original_price
+    - seller_id
+    - status
+    - tenant_id
+    - verification_code
+    type: object
+  entities.TicketResponse:
+    properties:
+      event_id:
+        type: integer
+      id:
+        type: integer
+      original_price:
+        type: number
+      seller_id:
+        type: integer
+      status:
+        type: string
+      tenant_id:
+        type: integer
+      verification_code:
+        type: string
+    type: object
+  entities.TicketUpRequest:
+    properties:
+      original_price:
+        type: number
+      status:
+        maxLength: 50
+        type: string
+      verification_code:
+        maxLength: 100
+        type: string
+    type: object
+  entities.TransactionCrRequest:
+    properties:
+      buyer_id:
+        type: integer
+      sale_price:
+        type: number
+      tenant_id:
+        type: integer
+      ticket_id:
+        type: integer
+      transaction_date:
+        type: string
+      transaction_status:
+        maxLength: 50
+        type: string
+    required:
+    - buyer_id
+    - sale_price
+    - tenant_id
+    - ticket_id
+    - transaction_date
+    - transaction_status
+    type: object
+  entities.TransactionResponse:
+    properties:
+      buyer_id:
+        type: integer
+      id:
+        type: integer
+      sale_price:
+        type: number
+      tenant_id:
+        type: integer
+      ticket_id:
+        type: integer
+      transaction_date:
+        type: string
+      transaction_status:
+        type: string
+    type: object
+  entities.TransactionUpRequest:
+    properties:
+      sale_price:
+        type: number
+      transaction_date:
+        type: string
+      transaction_status:
+        maxLength: 50
+        type: string
+    type: object
+  entities.UserCrRequest:
+    properties:
+      email:
+        maxLength: 100
+        type: string
+      name:
+        maxLength: 100
+        type: string
+      tenant_id:
+        type: integer
+    required:
+    - email
+    - name
+    - tenant_id
+    type: object
+  entities.UserResponse:
+    properties:
+      email:
+        type: string
+      id:
+        type: integer
+      name:
+        type: string
+      tenant_id:
+        type: integer
+    type: object
+  entities.UserUpRequest:
+    properties:
+      email:
+        maxLength: 100
+        type: string
+      name:
+        maxLength: 100
+        type: string
+    type: object
 info:
   contact: {}
-paths: {}
+paths:
+  /events:
+    get:
+      description: Get a list of all events
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/entities.EventResponse'
+            type: array
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Get all events
+      tags:
+      - events
+    post:
+      consumes:
+      - application/json
+      description: Create a new event with the given details
+      parameters:
+      - description: Event request body
+        in: body
+        name: event
+        required: true
+        schema:
+          $ref: '#/definitions/entities.EventCrRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/entities.EventResponse'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Create a new event
+      tags:
+      - events
+  /events/{id}:
+    delete:
+      description: Delete an event by ID
+      parameters:
+      - description: Event ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: No Content
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Delete an event
+      tags:
+      - events
+    get:
+      description: Get details of a specific event by ID
+      parameters:
+      - description: Event ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/entities.EventResponse'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Get event by ID
+      tags:
+      - events
+    put:
+      consumes:
+      - application/json
+      description: Update details of an existing event by ID
+      parameters:
+      - description: Event ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Event request body
+        in: body
+        name: event
+        required: true
+        schema:
+          $ref: '#/definitions/entities.EventCrRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/entities.EventResponse'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Update an event
+      tags:
+      - events
+  /preferences:
+    get:
+      description: Get a list of all notification preferences
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/entities.NotificationPreferencesResponse'
+            type: array
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Get all notification preferences
+      tags:
+      - notification_preferences
+    post:
+      consumes:
+      - application/json
+      description: Create a new notification preference with the given details
+      parameters:
+      - description: Preference request body
+        in: body
+        name: preference
+        required: true
+        schema:
+          $ref: '#/definitions/entities.NotificationPreferencesCrRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/entities.NotificationPreferencesResponse'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Create a new notification preference
+      tags:
+      - notification_preferences
+  /preferences/{id}:
+    delete:
+      description: Delete a notification preference by ID
+      parameters:
+      - description: Preference ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: No Content
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Delete a notification preference
+      tags:
+      - notification_preferences
+    get:
+      description: Get details of a specific notification preference by ID
+      parameters:
+      - description: Preference ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/entities.NotificationPreferencesResponse'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Get notification preference by ID
+      tags:
+      - notification_preferences
+    put:
+      consumes:
+      - application/json
+      description: Update details of an existing notification preference by ID
+      parameters:
+      - description: Preference ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Preference request body
+        in: body
+        name: preference
+        required: true
+        schema:
+          $ref: '#/definitions/entities.NotificationPreferencesUpRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/entities.NotificationPreferencesResponse'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Update a notification preference
+      tags:
+      - notification_preferences
+  /tenants:
+    get:
+      description: Get a list of all tenants
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/entities.TenantResponse'
+            type: array
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Get all tenants
+      tags:
+      - tenants
+    post:
+      consumes:
+      - application/json
+      description: Create a new tenant with the given details
+      parameters:
+      - description: Tenant request body
+        in: body
+        name: tenant
+        required: true
+        schema:
+          $ref: '#/definitions/entities.TenantCrRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/entities.TenantResponse'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Create a new tenant
+      tags:
+      - tenants
+  /tenants/{id}:
+    delete:
+      description: Delete a tenant by ID
+      parameters:
+      - description: Tenant ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: No Content
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Delete a tenant
+      tags:
+      - tenants
+    get:
+      description: Get details of a specific tenant by ID
+      parameters:
+      - description: Tenant ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/entities.TenantResponse'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Get tenant by ID
+      tags:
+      - tenants
+    put:
+      consumes:
+      - application/json
+      description: Update details of an existing tenant by ID
+      parameters:
+      - description: Tenant ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Tenant request body
+        in: body
+        name: tenant
+        required: true
+        schema:
+          $ref: '#/definitions/entities.TenantUpRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/entities.TenantResponse'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Update a tenant
+      tags:
+      - tenants
+  /tickets:
+    get:
+      description: Get a list of all tickets
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/entities.TicketResponse'
+            type: array
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Get all tickets
+      tags:
+      - tickets
+    post:
+      consumes:
+      - application/json
+      description: Create a new ticket with the given details
+      parameters:
+      - description: Ticket request body
+        in: body
+        name: ticket
+        required: true
+        schema:
+          $ref: '#/definitions/entities.TicketCrRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/entities.TicketResponse'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Create a new ticket
+      tags:
+      - tickets
+  /tickets/{id}:
+    delete:
+      description: Delete a ticket by ID
+      parameters:
+      - description: Ticket ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: No Content
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Delete a ticket
+      tags:
+      - tickets
+    get:
+      description: Get details of a specific ticket by ID
+      parameters:
+      - description: Ticket ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/entities.TicketResponse'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Get ticket by ID
+      tags:
+      - tickets
+    put:
+      consumes:
+      - application/json
+      description: Update details of an existing ticket by ID
+      parameters:
+      - description: Ticket ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Ticket request body
+        in: body
+        name: ticket
+        required: true
+        schema:
+          $ref: '#/definitions/entities.TicketUpRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/entities.TicketResponse'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Update a ticket
+      tags:
+      - tickets
+  /transactions:
+    get:
+      description: Get a list of all transactions
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/entities.TransactionResponse'
+            type: array
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Get all transactions
+      tags:
+      - transactions
+    post:
+      consumes:
+      - application/json
+      description: Create a new transaction with the given details
+      parameters:
+      - description: Transaction request body
+        in: body
+        name: transaction
+        required: true
+        schema:
+          $ref: '#/definitions/entities.TransactionCrRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/entities.TransactionResponse'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Create a new transaction
+      tags:
+      - transactions
+  /transactions/{id}:
+    delete:
+      description: Delete a transaction by ID
+      parameters:
+      - description: Transaction ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: No Content
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Delete a transaction
+      tags:
+      - transactions
+    get:
+      description: Get details of a specific transaction by ID
+      parameters:
+      - description: Transaction ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/entities.TransactionResponse'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Get transaction by ID
+      tags:
+      - transactions
+    put:
+      consumes:
+      - application/json
+      description: Update details of an existing transaction by ID
+      parameters:
+      - description: Transaction ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Transaction request body
+        in: body
+        name: transaction
+        required: true
+        schema:
+          $ref: '#/definitions/entities.TransactionUpRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/entities.TransactionResponse'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Update a transaction
+      tags:
+      - transactions
+  /users:
+    get:
+      description: Get a list of all users
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/entities.UserResponse'
+            type: array
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Get all users
+      tags:
+      - users
+    post:
+      consumes:
+      - application/json
+      description: Create a new user with the given details
+      parameters:
+      - description: User request body
+        in: body
+        name: user
+        required: true
+        schema:
+          $ref: '#/definitions/entities.UserCrRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/entities.UserResponse'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Create a new user
+      tags:
+      - users
+  /users/{id}:
+    delete:
+      description: Delete a user by ID
+      parameters:
+      - description: User ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: No Content
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Delete a user
+      tags:
+      - users
+    get:
+      description: Get details of a specific user by ID
+      parameters:
+      - description: User ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/entities.UserResponse'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Get user by ID
+      tags:
+      - users
+    put:
+      consumes:
+      - application/json
+      description: Update details of an existing user by ID
+      parameters:
+      - description: User ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: User request body
+        in: body
+        name: user
+        required: true
+        schema:
+          $ref: '#/definitions/entities.UserUpRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/entities.UserResponse'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Update a user
+      tags:
+      - users
 swagger: "2.0"

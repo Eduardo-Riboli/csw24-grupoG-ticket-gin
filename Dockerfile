@@ -16,4 +16,4 @@ RUN go install github.com/swaggo/swag/cmd/swag@latest
 EXPOSE 8080
 
 # Comando para rodar a aplicação Go
-CMD ["sh", "-c", "swag init && go run main.go"]
+CMD ["sh", "-c", "swag init && go run main.go"]

@@ -7,7 +7,6 @@ import (
     "github.com/gin-gonic/gin"
     entities "github.com/grupoG/csw24-grupoG-ticket-gin/entities/tenant"
     "github.com/grupoG/csw24-grupoG-ticket-gin/services"
-    "github.com/grupoG/csw24-grupoG-ticket-gin/utils"
 )
 
 type TenantController struct {
@@ -23,13 +22,13 @@ func NewTenantController(service *services.TenantService) *TenantController {
 // @Description Get a list of all tenants
 // @Tags tenants
 // @Produce json
-// @Success 200 {array} entities.Tenant
-// @Failure 500 {object} utils.ErrorResponse
+// @Success 200 {array} entities.TenantResponse
+// @Failure 500 {object} map[string]string
 // @Router /tenants [get]
 func (ctrl *TenantController) GetAllTenants(c *gin.Context) {
     tenants, err := ctrl.Service.GetAllTenants()
     if err != nil {
-        utils.ErrorResponse(c, http.StatusInternalServerError, err.Error())
+        c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
         return
     }
     c.JSON(http.StatusOK, tenants)
@@ -41,9 +40,9 @@ func (ctrl *TenantController) GetAllTenants(c *gin.Context) {
 // @Tags tenants
 // @Produce json
 // @Param id path int true "Tenant ID"
-// @Success 200 {object} entities.Tenant
-// @Failure 400 {object} utils.ErrorResponse
-// @Failure 404 {object} utils.ErrorResponse
+// @Success 200 {object} entities.TenantResponse
+// @Failure 400 {object} map[string]string
+// @Failure 404 {object} map[string]string
 // @Router /tenants/{id} [get]
 func (controller *TenantController) GetTenantByID(c *gin.Context) {
     idParam := c.Param("id")
@@ -69,19 +68,19 @@ func (controller *TenantController) GetTenantByID(c *gin.Context) {
 // @Accept json
 // @Produce json
 // @Param tenant body entities.TenantCrRequest true "Tenant request body"
-// @Success 201 {object} entities.Tenant
-// @Failure 400 {object} utils.ErrorResponse
-// @Failure 500 {object} utils.ErrorResponse
+// @Success 201 {object} entities.TenantResponse
+// @Failure 400 {object} map[string]string
+// @Failure 500 {object} map[string]string
 // @Router /tenants [post]
 func (ctrl *TenantController) CreateTenant(c *gin.Context) {
     var tenantRequest entities.TenantCrRequest
     if err := c.ShouldBindJSON(&tenantRequest); err != nil {
-        utils.ErrorResponse(c, http.StatusBadRequest, err.Error())
+        c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
         return
     }
     newTenant, err := ctrl.Service.CreateTenant(tenantRequest)
     if err != nil {
-        utils.ErrorResponse(c, http.StatusInternalServerError, err.Error())
+        c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
         return
     }
     c.JSON(http.StatusCreated, newTenant)
@@ -95,9 +94,9 @@ func (ctrl *TenantController) CreateTenant(c *gin.Context) {
 // @Produce json
 // @Param id path int true "Tenant ID"
 // @Param tenant body entities.TenantUpRequest true "Tenant request body"
-// @Success 200 {object} entities.Tenant
-// @Failure 400 {object} utils.ErrorResponse
-// @Failure 500 {object} utils.ErrorResponse
+// @Success 200 {object} entities.TenantResponse
+// @Failure 400 {object} map[string]string
+// @Failure 500 {object} map[string]string
 // @Router /tenants/{id} [put]
 func (ctrl *TenantController) UpdateTenant(c *gin.Context) {
     idParam := c.Param("id")
@@ -109,13 +108,13 @@ func (ctrl *TenantController) UpdateTenant(c *gin.Context) {
 
     var tenantRequest entities.TenantUpRequest
     if err := c.ShouldBindJSON(&tenantRequest); err != nil {
-        utils.ErrorResponse(c, http.StatusBadRequest, err.Error())
+        c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
         return
     }
 
     updatedTenant, err := ctrl.Service.UpdateTenant(uint(id), tenantRequest)
     if err != nil {
-        utils.ErrorResponse(c, http.StatusInternalServerError, err.Error())
+        c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
         return
     }
     c.JSON(http.StatusOK, updatedTenant)
@@ -128,8 +127,8 @@ func (ctrl *TenantController) UpdateTenant(c *gin.Context) {
 // @Produce json
 // @Param id path int true "Tenant ID"
 // @Success 204 {object} nil
-// @Failure 400 {object} utils.ErrorResponse
-// @Failure 500 {object} utils.ErrorResponse
+// @Failure 400 {object} map[string]string
+// @Failure 500 {object} map[string]string
 // @Router /tenants/{id} [delete]
 func (ctrl *TenantController) DeleteTenant(c *gin.Context) {
     idParam := c.Param("id")
@@ -140,7 +139,7 @@ func (ctrl *TenantController) DeleteTenant(c *gin.Context) {
     }
 
     if err := ctrl.Service.DeleteTenant(uint(id)); err != nil {
-        utils.ErrorResponse(c, http.StatusInternalServerError, err.Error())
+        c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
         return
     }
     c.JSON(http.StatusNoContent, nil)

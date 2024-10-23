@@ -7,7 +7,6 @@ import (
     "github.com/gin-gonic/gin"
     entities "github.com/grupoG/csw24-grupoG-ticket-gin/entities/ticket"
     "github.com/grupoG/csw24-grupoG-ticket-gin/services"
-    "github.com/grupoG/csw24-grupoG-ticket-gin/utils"
 )
 
 type TicketController struct {
@@ -23,13 +22,13 @@ func NewTicketController(service *services.TicketService) *TicketController {
 // @Description Get a list of all tickets
 // @Tags tickets
 // @Produce json
-// @Success 200 {array} entities.Ticket
-// @Failure 500 {object} utils.ErrorResponse
+// @Success 200 {array} entities.TicketResponse
+// @Failure 500 {object} map[string]string
 // @Router /tickets [get]
 func (ctrl *TicketController) GetAllTickets(c *gin.Context) {
     tickets, err := ctrl.Service.GetAllTickets()
     if err != nil {
-        utils.ErrorResponse(c, http.StatusInternalServerError, err.Error())
+        c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
         return
     }
     c.JSON(http.StatusOK, tickets)
@@ -41,9 +40,9 @@ func (ctrl *TicketController) GetAllTickets(c *gin.Context) {
 // @Tags tickets
 // @Produce json
 // @Param id path int true "Ticket ID"
-// @Success 200 {object} entities.Ticket
-// @Failure 400 {object} utils.ErrorResponse
-// @Failure 404 {object} utils.ErrorResponse
+// @Success 200 {object} entities.TicketResponse
+// @Failure 400 {object} map[string]string
+// @Failure 404 {object} map[string]string
 // @Router /tickets/{id} [get]
 func (ctrl *TicketController) GetTicketByID(c *gin.Context) {
     idParam := c.Param("id")
@@ -69,19 +68,19 @@ func (ctrl *TicketController) GetTicketByID(c *gin.Context) {
 // @Accept json
 // @Produce json
 // @Param ticket body entities.TicketCrRequest true "Ticket request body"
-// @Success 201 {object} entities.Ticket
-// @Failure 400 {object} utils.ErrorResponse
-// @Failure 500 {object} utils.ErrorResponse
+// @Success 201 {object} entities.TicketResponse
+// @Failure 400 {object} map[string]string
+// @Failure 500 {object} map[string]string
 // @Router /tickets [post]
 func (ctrl *TicketController) CreateTicket(c *gin.Context) {
     var ticketRequest entities.TicketCrRequest
     if err := c.ShouldBindJSON(&ticketRequest); err != nil {
-        utils.ErrorResponse(c, http.StatusBadRequest, err.Error())
+        c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
         return
     }
     newTicket, err := ctrl.Service.CreateTicket(ticketRequest)
     if err != nil {
-        utils.ErrorResponse(c, http.StatusInternalServerError, err.Error())
+        c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
         return
     }
     c.JSON(http.StatusCreated, newTicket)
@@ -95,9 +94,9 @@ func (ctrl *TicketController) CreateTicket(c *gin.Context) {
 // @Produce json
 // @Param id path int true "Ticket ID"
 // @Param ticket body entities.TicketUpRequest true "Ticket request body"
-// @Success 200 {object} entities.Ticket
-// @Failure 400 {object} utils.ErrorResponse
-// @Failure 500 {object} utils.ErrorResponse
+// @Success 200 {object} entities.TicketResponse
+// @Failure 400 {object} map[string]string
+// @Failure 500 {object} map[string]string
 // @Router /tickets/{id} [put]
 func (ctrl *TicketController) UpdateTicket(c *gin.Context) {
     idParam := c.Param("id")
@@ -109,13 +108,13 @@ func (ctrl *TicketController) UpdateTicket(c *gin.Context) {
 
     var ticketRequest entities.TicketUpRequest
     if err := c.ShouldBindJSON(&ticketRequest); err != nil {
-        utils.ErrorResponse(c, http.StatusBadRequest, err.Error())
+        c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
         return
     }
 
     updatedTicket, err := ctrl.Service.UpdateTicket(uint(id), ticketRequest)
     if err != nil {
-        utils.ErrorResponse(c, http.StatusInternalServerError, err.Error())
+        c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
         return
     }
     c.JSON(http.StatusOK, updatedTicket)
@@ -128,8 +127,8 @@ func (ctrl *TicketController) UpdateTicket(c *gin.Context) {
 // @Produce json
 // @Param id path int true "Ticket ID"
 // @Success 204 {object} nil
-// @Failure 400 {object} utils.ErrorResponse
-// @Failure 500 {object} utils.ErrorResponse
+// @Failure 400 {object} map[string]string
+// @Failure 500 {object} map[string]string
 // @Router /tickets/{id} [delete]
 func (ctrl *TicketController) DeleteTicket(c *gin.Context) {
     idParam := c.Param("id")
@@ -140,7 +139,7 @@ func (ctrl *TicketController) DeleteTicket(c *gin.Context) {
     }
 
     if err := ctrl.Service.DeleteTicket(uint(id)); err != nil {
-        utils.ErrorResponse(c, http.StatusInternalServerError, err.Error())
+        c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
         return
     }
     c.JSON(http.StatusNoContent, nil)

@@ -7,7 +7,6 @@ import (
     "github.com/gin-gonic/gin"
     entities "github.com/grupoG/csw24-grupoG-ticket-gin/entities/event"
     "github.com/grupoG/csw24-grupoG-ticket-gin/services"
-    "github.com/grupoG/csw24-grupoG-ticket-gin/utils"
 )
 
 type EventController struct {
@@ -23,13 +22,13 @@ func NewEventController(service *services.EventService) *EventController {
 // @Description Get a list of all events
 // @Tags events
 // @Produce json
-// @Success 200 {array} entities.Event
-// @Failure 500 {object} utils.ErrorResponse
+// @Success 200 {array} entities.EventResponse
+// @Failure 500 {object} map[string]string
 // @Router /events [get]
 func (ctrl *EventController) GetAllEvents(c *gin.Context) {
     events, err := ctrl.Service.GetAllEvents()
-    if (err != nil) {
-        utils.ErrorResponse(c, http.StatusInternalServerError, err.Error())
+    if err != nil {
+        c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
         return
     }
     c.JSON(http.StatusOK, events)
@@ -41,9 +40,9 @@ func (ctrl *EventController) GetAllEvents(c *gin.Context) {
 // @Tags events
 // @Produce json
 // @Param id path int true "Event ID"
-// @Success 200 {object} entities.Event
-// @Failure 400 {object} utils.ErrorResponse
-// @Failure 404 {object} utils.ErrorResponse
+// @Success 200 {object} entities.EventResponse
+// @Failure 400 {object} map[string]string
+// @Failure 404 {object} map[string]string
 // @Router /events/{id} [get]
 func (ctrl *EventController) GetEventByID(c *gin.Context) {
     idParam := c.Param("id")
@@ -69,19 +68,19 @@ func (ctrl *EventController) GetEventByID(c *gin.Context) {
 // @Accept json
 // @Produce json
 // @Param event body entities.EventCrRequest true "Event request body"
-// @Success 201 {object} entities.Event
-// @Failure 400 {object} utils.ErrorResponse
-// @Failure 500 {object} utils.ErrorResponse
+// @Success 201 {object} entities.EventResponse
+// @Failure 400 {object} map[string]string
+// @Failure 500 {object} map[string]string
 // @Router /events [post]
 func (ctrl *EventController) CreateEvent(c *gin.Context) {
     var eventRequest entities.EventCrRequest
     if err := c.ShouldBindJSON(&eventRequest); err != nil {
-        utils.ErrorResponse(c, http.StatusBadRequest, err.Error())
+        c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
         return
     }
     newEvent, err := ctrl.Service.CreateEvent(eventRequest)
     if err != nil {
-        utils.ErrorResponse(c, http.StatusInternalServerError, err.Error())
+        c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
         return
     }
     c.JSON(http.StatusCreated, newEvent)
@@ -94,10 +93,10 @@ func (ctrl *EventController) CreateEvent(c *gin.Context) {
 // @Accept json
 // @Produce json
 // @Param id path int true "Event ID"
-// @Param event body entities.EventUpRequest true "Event request body"
-// @Success 200 {object} entities.Event
-// @Failure 400 {object} utils.ErrorResponse
-// @Failure 500 {object} utils.ErrorResponse
+// @Param event body entities.EventCrRequest true "Event request body"
+// @Success 200 {object} entities.EventResponse
+// @Failure 400 {object} map[string]string
+// @Failure 500 {object} map[string]string
 // @Router /events/{id} [put]
 func (ctrl *EventController) UpdateEvent(c *gin.Context) {
     idParam := c.Param("id")
@@ -109,13 +108,13 @@ func (ctrl *EventController) UpdateEvent(c *gin.Context) {
 
     var eventRequest entities.EventUpRequest
     if err := c.ShouldBindJSON(&eventRequest); err != nil {
-        utils.ErrorResponse(c, http.StatusBadRequest, err.Error())
+        c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
         return
     }
 
     updatedEvent, err := ctrl.Service.UpdateEvent(uint(id), eventRequest)
     if err != nil {
-        utils.ErrorResponse(c, http.StatusInternalServerError, err.Error())
+        c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
         return
     }
     c.JSON(http.StatusOK, updatedEvent)
@@ -128,8 +127,8 @@ func (ctrl *EventController) UpdateEvent(c *gin.Context) {
 // @Produce json
 // @Param id path int true "Event ID"
 // @Success 204 {object} nil
-// @Failure 400 {object} utils.ErrorResponse
-// @Failure 500 {object} utils.ErrorResponse
+// @Failure 400 {object} map[string]string
+// @Failure 500 {object} map[string]string
 // @Router /events/{id} [delete]
 func (ctrl *EventController) DeleteEvent(c *gin.Context) {
     idParam := c.Param("id")
@@ -140,7 +139,7 @@ func (ctrl *EventController) DeleteEvent(c *gin.Context) {
     }
 
     if err := ctrl.Service.DeleteEvent(uint(id)); err != nil {
-        utils.ErrorResponse(c, http.StatusInternalServerError, err.Error())
+        c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
         return
     }
     c.JSON(http.StatusNoContent, nil)

@@ -7,7 +7,6 @@ import (
     "github.com/gin-gonic/gin"
     entities "github.com/grupoG/csw24-grupoG-ticket-gin/entities/notification_preferences"
     "github.com/grupoG/csw24-grupoG-ticket-gin/services"
-    "github.com/grupoG/csw24-grupoG-ticket-gin/utils"
 )
 
 type NotificationPreferencesController struct {
@@ -23,13 +22,13 @@ func NewNotificationPreferencesController(service *services.NotificationPreferen
 // @Description Get a list of all notification preferences
 // @Tags notification_preferences
 // @Produce json
-// @Success 200 {array} entities.NotificationPreferences
-// @Failure 500 {object} utils.ErrorResponse
+// @Success 200 {array} entities.NotificationPreferencesResponse
+// @Failure 500 {object} map[string]string
 // @Router /preferences [get]
 func (ctrl *NotificationPreferencesController) GetAllPreferences(c *gin.Context) {
     preferences, err := ctrl.Service.GetAllPreferences()
     if err != nil {
-        utils.ErrorResponse(c, http.StatusInternalServerError, err.Error())
+        c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
         return
     }
     c.JSON(http.StatusOK, preferences)
@@ -41,9 +40,9 @@ func (ctrl *NotificationPreferencesController) GetAllPreferences(c *gin.Context)
 // @Tags notification_preferences
 // @Produce json
 // @Param id path int true "Preference ID"
-// @Success 200 {object} entities.NotificationPreferences
-// @Failure 400 {object} utils.ErrorResponse
-// @Failure 404 {object} utils.ErrorResponse
+// @Success 200 {object} entities.NotificationPreferencesResponse
+// @Failure 400 {object} map[string]string
+// @Failure 404 {object} map[string]string
 // @Router /preferences/{id} [get]
 func (ctrl *NotificationPreferencesController) GetPreferenceByID(c *gin.Context) {
     idParam := c.Param("id")
@@ -69,19 +68,19 @@ func (ctrl *NotificationPreferencesController) GetPreferenceByID(c *gin.Context)
 // @Accept json
 // @Produce json
 // @Param preference body entities.NotificationPreferencesCrRequest true "Preference request body"
-// @Success 201 {object} entities.NotificationPreferences
-// @Failure 400 {object} utils.ErrorResponse
-// @Failure 500 {object} utils.ErrorResponse
+// @Success 201 {object} entities.NotificationPreferencesResponse
+// @Failure 400 {object} map[string]string
+// @Failure 500 {object} map[string]string
 // @Router /preferences [post]
 func (ctrl *NotificationPreferencesController) CreatePreference(c *gin.Context) {
     var request entities.NotificationPreferencesCrRequest
     if err := c.ShouldBindJSON(&request); err != nil {
-        utils.ErrorResponse(c, http.StatusBadRequest, err.Error())
+        c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
         return
     }
     newPreference, err := ctrl.Service.CreatePreference(request)
     if err != nil {
-        utils.ErrorResponse(c, http.StatusInternalServerError, err.Error())
+        c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
         return
     }
     c.JSON(http.StatusCreated, newPreference)
@@ -95,9 +94,9 @@ func (ctrl *NotificationPreferencesController) CreatePreference(c *gin.Context) 
 // @Produce json
 // @Param id path int true "Preference ID"
 // @Param preference body entities.NotificationPreferencesUpRequest true "Preference request body"
-// @Success 200 {object} entities.NotificationPreferences
-// @Failure 400 {object} utils.ErrorResponse
-// @Failure 500 {object} utils.ErrorResponse
+// @Success 200 {object} entities.NotificationPreferencesResponse
+// @Failure 400 {object} map[string]string
+// @Failure 500 {object} map[string]string
 // @Router /preferences/{id} [put]
 func (ctrl *NotificationPreferencesController) UpdatePreference(c *gin.Context) {
     idParam := c.Param("id")
@@ -109,13 +108,13 @@ func (ctrl *NotificationPreferencesController) UpdatePreference(c *gin.Context) 
 
     var request entities.NotificationPreferencesUpRequest
     if err := c.ShouldBindJSON(&request); err != nil {
-        utils.ErrorResponse(c, http.StatusBadRequest, err.Error())
+        c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
         return
     }
 
     updatedPreference, err := ctrl.Service.UpdatePreference(uint(id), request)
     if err != nil {
-        utils.ErrorResponse(c, http.StatusInternalServerError, err.Error())
+        c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
         return
     }
     c.JSON(http.StatusOK, updatedPreference)
@@ -128,8 +127,8 @@ func (ctrl *NotificationPreferencesController) UpdatePreference(c *gin.Context) 
 // @Produce json
 // @Param id path int true "Preference ID"
 // @Success 204 {object} nil
-// @Failure 400 {object} utils.ErrorResponse
-// @Failure 500 {object} utils.ErrorResponse
+// @Failure 400 {object} map[string]string
+// @Failure 500 {object} map[string]string
 // @Router /preferences/{id} [delete]
 func (ctrl *NotificationPreferencesController) DeletePreference(c *gin.Context) {
     idParam := c.Param("id")
@@ -140,7 +139,7 @@ func (ctrl *NotificationPreferencesController) DeletePreference(c *gin.Context) 
     }
 
     if err := ctrl.Service.DeletePreference(uint(id)); err != nil {
-        utils.ErrorResponse(c, http.StatusInternalServerError, err.Error())
+        c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
         return
     }
     c.JSON(http.StatusNoContent, nil)
