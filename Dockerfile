@@ -10,10 +10,10 @@ COPY . .
 RUN go mod download
 
 RUN go install github.com/swaggo/swag/cmd/swag@latest
-RUN swag init
+# RUN swag init
 
 # Expor a porta que a aplicação vai usar
 EXPOSE 8080
 
 # Comando para rodar a aplicação Go
-CMD ["go", "run", "main.go"]
+CMD ["sh", "-c", "swag init && go run main.go"]
