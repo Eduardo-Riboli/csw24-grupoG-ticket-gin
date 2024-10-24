@@ -2,26 +2,28 @@ services:
   web:
     build: .  # Construir a partir do Dockerfile na pasta atual
     ports:
-      - "8080:8080"
+      - "${WEB_PORT}:8080"  # Porta configurada via .env
     volumes:
       - .:/app  # Montar o diretório local para desenvolvimento
+    env_file:
+      - .env
     environment:
       - ENV=development
-      - DB_HOST=postgresdb
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=postgres
-      - POSTGRES_DB=mydb
+      - DB_HOST=${DB_HOST}
+      - POSTGRES_USER=${DB_USER}
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
+      - POSTGRES_DB=${DB_NAME}
     depends_on:
       - postgresdb
 
   postgresdb:
     image: postgres:13
     environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
-      POSTGRES_DB: mydb
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_NAME}
     ports:
-      - "5432:5432"
+      - "${DB_PORT}:5432"  # Porta configurada via .env
     volumes:
       - postgres_data:/var/lib/postgresql/data
 
@@ -31,7 +33,7 @@ services:
       PGADMIN_DEFAULT_EMAIL: admin@admin.com
       PGADMIN_DEFAULT_PASSWORD: admin
     ports:
-      - "5050:80"
+      - "${PGADMIN_PORT}:80"  # Porta configurada via .env
     depends_on:
       - postgresdb
 

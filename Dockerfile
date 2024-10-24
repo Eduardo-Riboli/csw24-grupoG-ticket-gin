@@ -6,6 +6,9 @@ WORKDIR /app
 # Copiar todo o projeto para o contêiner
 COPY . .
 
+# Copiar o .env para o container
+COPY .env .env
+
 # Instalar dependências
 RUN go mod download
 
