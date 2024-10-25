@@ -106,3 +106,23 @@ output "private_key_pem" {
   value     = tls_private_key.my_key.private_key_pem
   sensitive = true
 }
+
+resource "aws_db_instance" "postgres_instance" {
+  identifier         = "rds-t1"
+  engine             = "postgres"
+  engine_version     = "16.3"  # Versão do PostgreSQL
+  instance_class     = "db.t3.micro"
+  username           = "postgres"     # Usuário administrador
+  password           = "minhasenha123"  # Senha (mude para algo seguro)
+  publicly_accessible = true  # Define se será público (use com cuidado)
+  skip_final_snapshot = true
+  allocated_storage = 20  # Tamanho do disco em GB
+  
+
+  vpc_security_group_ids = [aws_security_group.api_access.id]
+
+  # Tags para identificação
+  tags = {
+    Name = "PostgresRDS"
+  }
+}
