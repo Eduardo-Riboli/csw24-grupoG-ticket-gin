@@ -1,12 +1,12 @@
 package controllers
 
 import (
-    "net/http"
-    "strconv"
+	"net/http"
+	"strconv"
 
-    "github.com/gin-gonic/gin"
-    entities "github.com/grupoG/csw24-grupoG-ticket-gin/entities/ticket"
-    "github.com/grupoG/csw24-grupoG-ticket-gin/services"
+	"github.com/gin-gonic/gin"
+	entities "github.com/grupoG/csw24-grupoG-ticket-gin/entities/ticket"
+	"github.com/grupoG/csw24-grupoG-ticket-gin/services"
 )
 
 type TicketController struct {
@@ -143,4 +143,104 @@ func (ctrl *TicketController) DeleteTicket(c *gin.Context) {
         return
     }
     c.JSON(http.StatusNoContent, nil)
+}
+
+// PurchaseTicket godoc
+// @Summary Purchase a ticket
+// @Description Purchase a ticket by providing necessary details
+// @Tags tickets
+// @Accept json
+// @Produce json
+// @Param ticket body entities.TicketPurchaseRequest true "Ticket purchase request body"
+// @Success 201 {object} entities.TicketResponse
+// @Failure 400 {object} map[string]string
+// @Failure 500 {object} map[string]string
+// @Router /tickets/purchase [post]
+func (ctrl *TicketController) PurchaseTicket(c *gin.Context) {
+    var ticketRequest entities.TicketPurchaseRequest
+    if err := c.ShouldBindJSON(&ticketRequest); err != nil {
+        c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+        return
+    }
+    newTicket, err := ctrl.Service.PurchaseTicket(ticketRequest)
+    if err != nil {
+        c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+        return
+    }
+    c.JSON(http.StatusCreated, newTicket)
+}
+
+// SellTicket godoc
+// @Summary Sell a ticket
+// @Description List a ticket for sale on the platform
+// @Tags tickets
+// @Accept json
+// @Produce json
+// @Param ticket body entities.TicketSellRequest true "Ticket sell request body"
+// @Success 201 {object} entities.TicketResponse
+// @Failure 400 {object} map[string]string
+// @Failure 500 {object} map[string]string
+// @Router /tickets/sell [post]
+func (ctrl *TicketController) SellTicket(c *gin.Context) {
+    var ticketRequest entities.TicketSellRequest
+    if err := c.ShouldBindJSON(&ticketRequest); err != nil {
+        c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+        return
+    }
+    newTicket, err := ctrl.Service.SellTicket(ticketRequest)
+    if err != nil {
+        c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+        return
+    }
+    c.JSON(http.StatusCreated, newTicket)
+}
+
+// AuthenticateTicket godoc
+// @Summary Authenticate a ticket
+// @Description Authenticate a ticket by scanning its verification code
+// @Tags tickets
+// @Accept json
+// @Produce json
+// @Param ticket body entities.TicketAuthRequest true "Ticket authentication request body"
+// @Success 200 {object} entities.TicketResponse
+// @Failure 400 {object} map[string]string
+// @Failure 500 {object} map[string]string
+// @Router /tickets/authenticate [post]
+func (ctrl *TicketController) AuthenticateTicket(c *gin.Context) {
+    var ticketRequest entities.TicketAuthRequest
+    if err := c.ShouldBindJSON(&ticketRequest); err != nil {
+        c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+        return
+    }
+    authenticatedTicket, err := ctrl.Service.AuthenticateTicket(ticketRequest)
+    if err != nil {
+        c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+        return
+    }
+    c.JSON(http.StatusOK, authenticatedTicket)
+}
+
+// RefundTicket godoc
+// @Summary Refund a ticket
+// @Description Request a refund for a purchased ticket
+// @Tags tickets
+// @Accept json
+// @Produce json
+// @Param ticket body entities.TicketRefundRequest true "Ticket refund request body"
+// @Success 200 {object} entities.TicketResponse
+// @Failure 400 {object} map[string]string
+// @Failure 500 {object} map[string]string
+// @Router /tickets/refund [post]
+func (ctrl *TicketController) RefundTicket(c *gin.Context) {
+    var ticketRequest entities.TicketRefundRequest
+    if err := c.ShouldBindJSON(&ticketRequest); err != nil {
+        c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+        return
+    }
+    refundedTicket, err := ctrl.Service.RefundTicket(ticketRequest)
+    if err != nil {
+        c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+        return
+    }
+    c.JSON(http.StatusOK, refundedTicket)
 }

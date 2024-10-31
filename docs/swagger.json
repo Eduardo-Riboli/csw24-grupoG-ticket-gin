@@ -770,6 +770,214 @@
                 }
             }
         },
+        "/tickets/authenticate": {
+            "post": {
+                "description": "Authenticate a ticket by scanning its verification code",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "tickets"
+                ],
+                "summary": "Authenticate a ticket",
+                "parameters": [
+                    {
+                        "description": "Ticket authentication request body",
+                        "name": "ticket",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/entities.TicketAuthRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/entities.TicketResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/tickets/purchase": {
+            "post": {
+                "description": "Purchase a ticket by providing necessary details",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "tickets"
+                ],
+                "summary": "Purchase a ticket",
+                "parameters": [
+                    {
+                        "description": "Ticket purchase request body",
+                        "name": "ticket",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/entities.TicketPurchaseRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/entities.TicketResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/tickets/refund": {
+            "post": {
+                "description": "Request a refund for a purchased ticket",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "tickets"
+                ],
+                "summary": "Refund a ticket",
+                "parameters": [
+                    {
+                        "description": "Ticket refund request body",
+                        "name": "ticket",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/entities.TicketRefundRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/entities.TicketResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/tickets/sell": {
+            "post": {
+                "description": "List a ticket for sale on the platform",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "tickets"
+                ],
+                "summary": "Sell a ticket",
+                "parameters": [
+                    {
+                        "description": "Ticket sell request body",
+                        "name": "ticket",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/entities.TicketSellRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/entities.TicketResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/tickets/{id}": {
             "get": {
                 "description": "Get details of a specific ticket by ID",
@@ -1510,6 +1718,17 @@
                 }
             }
         },
+        "entities.TicketAuthRequest": {
+            "type": "object",
+            "required": [
+                "verification_code"
+            ],
+            "properties": {
+                "verification_code": {
+                    "type": "string"
+                }
+            }
+        },
         "entities.TicketCrRequest": {
             "type": "object",
             "required": [
@@ -1543,6 +1762,45 @@
                 }
             }
         },
+        "entities.TicketPurchaseRequest": {
+            "type": "object",
+            "required": [
+                "event_id",
+                "original_price",
+                "seller_id",
+                "tenant_id",
+                "verification_code"
+            ],
+            "properties": {
+                "event_id": {
+                    "type": "integer"
+                },
+                "original_price": {
+                    "type": "number"
+                },
+                "seller_id": {
+                    "type": "integer"
+                },
+                "tenant_id": {
+                    "type": "integer"
+                },
+                "verification_code": {
+                    "type": "string",
+                    "maxLength": 100
+                }
+            }
+        },
+        "entities.TicketRefundRequest": {
+            "type": "object",
+            "required": [
+                "ticket_id"
+            ],
+            "properties": {
+                "ticket_id": {
+                    "type": "integer"
+                }
+            }
+        },
         "entities.TicketResponse": {
             "type": "object",
             "properties": {
@@ -1566,6 +1824,34 @@
                 },
                 "verification_code": {
                     "type": "string"
+                }
+            }
+        },
+        "entities.TicketSellRequest": {
+            "type": "object",
+            "required": [
+                "event_id",
+                "original_price",
+                "seller_id",
+                "tenant_id",
+                "verification_code"
+            ],
+            "properties": {
+                "event_id": {
+                    "type": "integer"
+                },
+                "original_price": {
+                    "type": "number"
+                },
+                "seller_id": {
+                    "type": "integer"
+                },
+                "tenant_id": {
+                    "type": "integer"
+                },
+                "verification_code": {
+                    "type": "string",
+                    "maxLength": 100
                 }
             }
         },

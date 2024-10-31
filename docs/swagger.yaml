@@ -91,6 +91,13 @@ definitions:
         maxLength: 255
         type: string
     type: object
+  entities.TicketAuthRequest:
+    properties:
+      verification_code:
+        type: string
+    required:
+    - verification_code
+    type: object
   entities.TicketCrRequest:
     properties:
       event_id:
@@ -115,6 +122,33 @@ definitions:
     - tenant_id
     - verification_code
     type: object
+  entities.TicketPurchaseRequest:
+    properties:
+      event_id:
+        type: integer
+      original_price:
+        type: number
+      seller_id:
+        type: integer
+      tenant_id:
+        type: integer
+      verification_code:
+        maxLength: 100
+        type: string
+    required:
+    - event_id
+    - original_price
+    - seller_id
+    - tenant_id
+    - verification_code
+    type: object
+  entities.TicketRefundRequest:
+    properties:
+      ticket_id:
+        type: integer
+    required:
+    - ticket_id
+    type: object
   entities.TicketResponse:
     properties:
       event_id:
@@ -131,6 +165,26 @@ definitions:
         type: integer
       verification_code:
         type: string
+    type: object
+  entities.TicketSellRequest:
+    properties:
+      event_id:
+        type: integer
+      original_price:
+        type: number
+      seller_id:
+        type: integer
+      tenant_id:
+        type: integer
+      verification_code:
+        maxLength: 100
+        type: string
+    required:
+    - event_id
+    - original_price
+    - seller_id
+    - tenant_id
+    - verification_code
     type: object
   entities.TicketUpRequest:
     properties:
@@ -833,6 +887,142 @@ paths:
               type: string
             type: object
       summary: Update a ticket
+      tags:
+      - tickets
+  /tickets/authenticate:
+    post:
+      consumes:
+      - application/json
+      description: Authenticate a ticket by scanning its verification code
+      parameters:
+      - description: Ticket authentication request body
+        in: body
+        name: ticket
+        required: true
+        schema:
+          $ref: '#/definitions/entities.TicketAuthRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/entities.TicketResponse'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Authenticate a ticket
+      tags:
+      - tickets
+  /tickets/purchase:
+    post:
+      consumes:
+      - application/json
+      description: Purchase a ticket by providing necessary details
+      parameters:
+      - description: Ticket purchase request body
+        in: body
+        name: ticket
+        required: true
+        schema:
+          $ref: '#/definitions/entities.TicketPurchaseRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/entities.TicketResponse'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Purchase a ticket
+      tags:
+      - tickets
+  /tickets/refund:
+    post:
+      consumes:
+      - application/json
+      description: Request a refund for a purchased ticket
+      parameters:
+      - description: Ticket refund request body
+        in: body
+        name: ticket
+        required: true
+        schema:
+          $ref: '#/definitions/entities.TicketRefundRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/entities.TicketResponse'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Refund a ticket
+      tags:
+      - tickets
+  /tickets/sell:
+    post:
+      consumes:
+      - application/json
+      description: List a ticket for sale on the platform
+      parameters:
+      - description: Ticket sell request body
+        in: body
+        name: ticket
+        required: true
+        schema:
+          $ref: '#/definitions/entities.TicketSellRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/entities.TicketResponse'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Sell a ticket
       tags:
       - tickets
   /transactions:

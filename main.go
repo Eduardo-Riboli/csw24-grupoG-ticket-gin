@@ -51,6 +51,7 @@ func main() {
     docs.SwaggerInfo.BasePath = "/api" // Acessar a variável BasePath corretamente
 
     router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
+    router.POST("/tickets/sell", ticketController.SellTicket)
 
     // Iniciar o servidor
     router.Run(":8080")

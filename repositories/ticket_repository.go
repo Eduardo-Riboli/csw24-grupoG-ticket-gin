@@ -1,8 +1,8 @@
 package repositories
 
 import (
-    "github.com/grupoG/csw24-grupoG-ticket-gin/models"
-    "gorm.io/gorm"
+	"github.com/grupoG/csw24-grupoG-ticket-gin/models"
+	"gorm.io/gorm"
 )
 
 type TicketRepository struct {
@@ -48,4 +48,27 @@ func (r *TicketRepository) Delete(id uint) error {
         return err
     }
     return nil
+}
+
+func (repo *TicketRepository) GetByVerificationCode(code string) (models.Ticket, error) {
+    var ticket models.Ticket
+    if err := repo.DB.Where("verification_code = ?", code).First(&ticket).Error; err != nil {
+        return ticket, err
+    }
+    return ticket, nil
+}
+
+func (r *TicketRepository) GetTransactionByTicketID(ticketID uint) (models.Transaction, error) {
+    var transaction models.Transaction
+    if err := r.DB.Where("ticket_id = ?", ticketID).First(&transaction).Error; err != nil {
+        return transaction, err
+    }
+    return transaction, nil
+}
+
+func (r *TicketRepository) UpdateTransaction(transaction models.Transaction) (models.Transaction, error) {
+    if err := r.DB.Save(&transaction).Error; err != nil {
+        return transaction, err
+    }
+    return transaction, nil
 }
