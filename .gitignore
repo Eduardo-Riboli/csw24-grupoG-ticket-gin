@@ -75,4 +75,3 @@ infra/.terraform.lock.hcl
 
 # aws's ssh key
 *.pem
-*.env
