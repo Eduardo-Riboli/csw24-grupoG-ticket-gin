@@ -16,16 +16,16 @@ services:
     depends_on:
       - postgresdb
 
-  postgresdb:
-    image: postgres:13
-    environment:
-      POSTGRES_USER: ${DB_USER}
-      POSTGRES_PASSWORD: ${DB_PASSWORD}
-      POSTGRES_DB: ${DB_NAME}
-    ports:
-      - "${DB_PORT}:5432"  # Porta configurada via .env
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
+  # postgresdb:
+  #   image: postgres:13
+  #   environment:
+  #     POSTGRES_USER: ${DB_USER}
+  #     POSTGRES_PASSWORD: ${DB_PASSWORD}
+  #     POSTGRES_DB: ${DB_NAME}
+  #   ports:
+  #     - "${DB_PORT}:5432"  # Porta configurada via .env
+  #   volumes:
+  #     - postgres_data:/var/lib/postgresql/data
 
   pgadmin:
     image: dpage/pgadmin4
@@ -34,8 +34,8 @@ services:
       PGADMIN_DEFAULT_PASSWORD: admin
     ports:
       - "${PGADMIN_PORT}:80"  # Porta configurada via .env
-    depends_on:
-      - postgresdb
+    # depends_on:
+    #   - postgresdb
 
 volumes:
   postgres_data:
