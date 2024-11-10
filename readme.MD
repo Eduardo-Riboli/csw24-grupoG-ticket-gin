@@ -105,3 +105,4 @@ OBS: Muito cuidado para não perder o arquivo .pem!
 - [ X ] Criar a infraestrutura da AWS com o Terraform
 - [ X ] Subir a aplicação na AWS
 - [  ] Ser feliz
+- [  ] Ser ainda mais feliz
