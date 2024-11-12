@@ -1,22 +1,36 @@
-FROM golang:1.21-bullseye
+# Use uma imagem oficial como uma etapa de build
+FROM golang:1.21-bullseye AS builder
 
 # Definir o diretório de trabalho
 WORKDIR /app
 
-# Copiar todo o projeto para o contêiner
-COPY . .
-
-# Copiar o .env para o container
-COPY .env .env
-
-# Instalar dependências
+# Copie e baixe as dependências do módulo
+COPY go.mod go.sum ./
 RUN go mod download
 
-RUN go install github.com/swaggo/swag/cmd/swag@latest
-# RUN swag init
+# Copie o restante dos arquivos da aplicação
+COPY . .
 
-# Expor a porta que a aplicação vai usar
+# Instalar o Swagger
+RUN go install github.com/swaggo/swag/cmd/swag@latest
+
+# Inicializar o Swagger
+RUN swag init
+
+# Compile a aplicação
+RUN CGO_ENABLED=0 GOOS=linux go build -o main main.go
+
+# Utilize uma imagem menor para o contêiner final
+FROM alpine:latest
+
+RUN apk --no-cache add ca-certificates
+WORKDIR /root/
+COPY --from=builder /app/main .
+COPY --from=builder /app/swagger ./swagger
+COPY .env .env
+
+# Expor a porta que a aplicação vai usar (opcional)
 EXPOSE 8080
 
 # Comando para rodar a aplicação Go
-CMD ["sh", "-c", "swag init && go run main.go"]
+CMD ["./main"]

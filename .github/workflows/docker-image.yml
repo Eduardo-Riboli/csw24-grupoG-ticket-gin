@@ -62,3 +62,10 @@ jobs:
         docker build -t $ECR_REGISTRY/t1-repository:$IMAGE_TAG .
         docker push $ECR_REGISTRY/t1-repository:$IMAGE_TAG
         echo "image=$ECR_REGISTRY/t1-repository:$IMAGE_TAG" >> $GITHUB_OUTPUT
+
+    - name: Deploy to AWS Lambda
+      env:
+        ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+        IMAGE_TAG: ${{ github.sha }}
+      run: |
+        aws lambda update-function-code --function-name my-lambda-function --image-uri $ECR_REGISTRY/my-go-app:$IMAGE_TAG
