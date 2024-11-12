@@ -63,24 +63,24 @@ jobs:
           echo "image=$ECR_REGISTRY/t1-repository:$IMAGE_TAG" >> $GITHUB_OUTPUT
 
       - name: Deploy to AWS Lambda
-      env:
-        ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-        IMAGE_TAG: ${{ github.sha }}
-      run: |
-        FUNCTION_NAME="my-lambda-function"
-        IMAGE_URI=$ECR_REGISTRY/my-go-app:$IMAGE_TAG
-        ROLE_ARN="arn:aws:iam::379175286351:role/LabRole"
-        
-        # Check if the function exists
-        if aws lambda get-function --function-name $FUNCTION_NAME; then
-          echo "Function exists, updating..."
-          aws lambda update-function-code --function-name $FUNCTION_NAME --image-uri $IMAGE_URI
-        else
-          echo "Function does not exist, creating..."
-          aws lambda create-function \
-            --function-name $FUNCTION_NAME \
-            --package-type Image \
-            --code ImageUri=$IMAGE_URI \
-            --role $ROLE_ARN \
-            --region us-east-1
-        fi
+        env:
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          IMAGE_TAG: ${{ github.sha }}
+        run: |
+          FUNCTION_NAME="my-lambda-function"
+          IMAGE_URI=$ECR_REGISTRY/my-go-app:$IMAGE_TAG
+          ROLE_ARN="arn:aws:iam::379175286351:role/LabRole"
+
+          # Check if the function exists
+          if aws lambda get-function --function-name $FUNCTION_NAME; then
+            echo "Function exists, updating..."
+            aws lambda update-function-code --function-name $FUNCTION_NAME --image-uri $IMAGE_URI
+          else
+            echo "Function does not exist, creating..."
+            aws lambda create-function \
+              --function-name $FUNCTION_NAME \
+              --package-type Image \
+              --code ImageUri=$IMAGE_URI \
+              --role $ROLE_ARN \
+              --region us-east-1
+          fi
