@@ -26,7 +26,7 @@ FROM alpine:latest
 RUN apk --no-cache add ca-certificates
 WORKDIR /root/
 COPY --from=builder /app/main .
-COPY --from=builder /app/swagger ./swagger
+# COPY --from=builder /app/swagger ./swagger
 COPY .env .env
 
 # Expor a porta que a aplicação vai usar (opcional)
