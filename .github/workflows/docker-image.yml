@@ -67,8 +67,8 @@ jobs:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
           IMAGE_TAG: ${{ github.sha }}
         run: |
-          FUNCTION_NAME="my-lambda-function"
-          IMAGE_URI=$ECR_REGISTRY/my-go-app:$IMAGE_TAG
+          FUNCTION_NAME="my-lambda-function22"
+          IMAGE_URI=$ECR_REGISTRY/t1-repository:$IMAGE_TAG
           ROLE_ARN="arn:aws:iam::379175286351:role/LabRole"
 
           # Check if the function exists
