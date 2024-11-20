@@ -1,0 +1,29 @@
+service: go-api-serverless-v10
+
+provider:
+  name: aws
+  runtime: provided.al2023
+  region: us-east-1
+  role: arn:aws:iam::379175286351:role/LabRole # Substitua pelo ARN do seu Role
+
+  environment:
+    DB_HOST: rds-t1.cttyfnhps03u.us-east-1.rds.amazonaws.com
+    DB_USER: postgres
+    DB_PASSWORD: minhasenha123
+    DB_NAME: postgres
+    DB_PORT: 5432
+    PGADMIN_PORT: 5050
+    WEB_PORT: 8080
+
+package:
+ include:
+   - bootstrap
+   
+functions:
+  api:
+    handler: bootstrap
+    	
+    events:
+      - http:
+          path: /
+          method: ANY

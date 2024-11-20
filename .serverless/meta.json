@@ -1,0 +1,608 @@
+{
+  "/workspaces/csw24-grupoG-ticket-gin": {
+    "versionSfCore": null,
+    "versionFramework": "4.4.11",
+    "isWithinCompose": false,
+    "isCompose": false,
+    "composeOrgName": null,
+    "composeResolverProviders": {
+      "default-aws-credential-resolver": "<REDACTED>",
+      "sls": {
+        "instance": {
+          "credentials": "<REDACTED>",
+          "serviceConfigFile": {
+            "service": "go-api-serverless-v10",
+            "provider": {
+              "name": "aws",
+              "runtime": "provided.al2023",
+              "region": "us-east-1",
+              "role": "arn:aws:iam::379175286351:role/LabRole",
+              "environment": {
+                "DB_HOST": "rds-t1.cttyfnhps03u.us-east-1.rds.amazonaws.com",
+                "DB_USER": "postgres",
+                "DB_PASSWORD": "<REDACTED>",
+                "DB_NAME": "postgres",
+                "DB_PORT": "5432",
+                "PGADMIN_PORT": "5050",
+                "WEB_PORT": "8080"
+              },
+              "stage": "dev",
+              "versionFunctions": true,
+              "compiledCloudFormationTemplate": {
+                "AWSTemplateFormatVersion": "2010-09-09",
+                "Description": "The AWS CloudFormation template for this Serverless application",
+                "Resources": {
+                  "ApiLogGroup": {
+                    "Type": "AWS::Logs::LogGroup",
+                    "Properties": {
+                      "LogGroupName": "/aws/lambda/go-api-serverless-v10-dev-api"
+                    }
+                  },
+                  "ApiLambdaFunction": {
+                    "Type": "AWS::Lambda::Function",
+                    "Properties": {
+                      "Code": {
+                        "S3Bucket": "serverless-framework-deployments-us-east-1-3f8afd83-b182",
+                        "S3Key": "serverless/go-api-serverless-v10/dev/1732055255225-2024-11-19T22:27:35.225Z/go-api-serverless-v10.zip"
+                      },
+                      "Handler": "bootstrap",
+                      "Runtime": "provided.al2023",
+                      "FunctionName": "go-api-serverless-v10-dev-api",
+                      "MemorySize": 1024,
+                      "Timeout": 6,
+                      "Environment": {
+                        "Variables": {
+                          "DB_HOST": "rds-t1.cttyfnhps03u.us-east-1.rds.amazonaws.com",
+                          "DB_USER": "postgres",
+                          "DB_PASSWORD": "<REDACTED>",
+                          "DB_NAME": "postgres",
+                          "DB_PORT": "5432",
+                          "PGADMIN_PORT": "5050",
+                          "WEB_PORT": "8080"
+                        }
+                      },
+                      "Role": "arn:aws:iam::379175286351:role/LabRole"
+                    },
+                    "DependsOn": [
+                      "ApiLogGroup"
+                    ]
+                  },
+                  "ApiLambdaVersion5Rs4na41HWexEXmdV7RUQB4Osxw6qfLQauXV9zYhA": {
+                    "Type": "AWS::Lambda::Version",
+                    "DeletionPolicy": "Retain",
+                    "Properties": {
+                      "FunctionName": {
+                        "Ref": "ApiLambdaFunction"
+                      },
+                      "CodeSha256": "9O7c6uHI1m7a4m58uz6Iz6ScIjlBHh8kuiHj3BmBwkc="
+                    }
+                  },
+                  "ApiGatewayRestApi": {
+                    "Type": "AWS::ApiGateway::RestApi",
+                    "Properties": {
+                      "Name": "dev-go-api-serverless-v10",
+                      "EndpointConfiguration": {
+                        "Types": [
+                          "EDGE"
+                        ]
+                      },
+                      "Policy": ""
+                    }
+                  },
+                  "ApiGatewayMethodAny": {
+                    "Type": "AWS::ApiGateway::Method",
+                    "Properties": {
+                      "HttpMethod": "ANY",
+                      "RequestParameters": {},
+                      "ResourceId": {
+                        "Fn::GetAtt": [
+                          "ApiGatewayRestApi",
+                          "RootResourceId"
+                        ]
+                      },
+                      "RestApiId": {
+                        "Ref": "ApiGatewayRestApi"
+                      },
+                      "ApiKeyRequired": "<REDACTED>",
+                      "AuthorizationType": "NONE",
+                      "Integration": {
+                        "IntegrationHttpMethod": "POST",
+                        "Type": "AWS_PROXY",
+                        "Uri": {
+                          "Fn::Join": [
+                            "",
+                            [
+                              "arn:",
+                              {
+                                "Ref": "AWS::Partition"
+                              },
+                              ":apigateway:",
+                              {
+                                "Ref": "AWS::Region"
+                              },
+                              ":lambda:path/2015-03-31/functions/",
+                              {
+                                "Fn::GetAtt": [
+                                  "ApiLambdaFunction",
+                                  "Arn"
+                                ]
+                              },
+                              "/invocations"
+                            ]
+                          ]
+                        }
+                      },
+                      "MethodResponses": []
+                    },
+                    "DependsOn": [
+                      "ApiLambdaPermissionApiGateway"
+                    ]
+                  },
+                  "ApiGatewayDeployment1732055250028": {
+                    "Type": "AWS::ApiGateway::Deployment",
+                    "Properties": {
+                      "RestApiId": {
+                        "Ref": "ApiGatewayRestApi"
+                      },
+                      "StageName": "dev"
+                    },
+                    "DependsOn": [
+                      "ApiGatewayMethodAny"
+                    ]
+                  },
+                  "ApiLambdaPermissionApiGateway": {
+                    "Type": "AWS::Lambda::Permission",
+                    "Properties": {
+                      "FunctionName": {
+                        "Fn::GetAtt": [
+                          "ApiLambdaFunction",
+                          "Arn"
+                        ]
+                      },
+                      "Action": "lambda:InvokeFunction",
+                      "Principal": "apigateway.amazonaws.com",
+                      "SourceArn": {
+                        "Fn::Join": [
+                          "",
+                          [
+                            "arn:",
+                            {
+                              "Ref": "AWS::Partition"
+                            },
+                            ":execute-api:",
+                            {
+                              "Ref": "AWS::Region"
+                            },
+                            ":",
+                            {
+                              "Ref": "AWS::AccountId"
+                            },
+                            ":",
+                            {
+                              "Ref": "ApiGatewayRestApi"
+                            },
+                            "/*/*"
+                          ]
+                        ]
+                      }
+                    }
+                  }
+                },
+                "Outputs": {
+                  "ServerlessDeploymentBucketName": {
+                    "Value": "serverless-framework-deployments-us-east-1-3f8afd83-b182",
+                    "Export": {
+                      "Name": "sls-go-api-serverless-v10-dev-ServerlessDeploymentBucketName"
+                    }
+                  },
+                  "ApiLambdaFunctionQualifiedArn": {
+                    "Description": "Current Lambda function version",
+                    "Value": {
+                      "Ref": "ApiLambdaVersion5Rs4na41HWexEXmdV7RUQB4Osxw6qfLQauXV9zYhA"
+                    },
+                    "Export": {
+                      "Name": "sls-go-api-serverless-v10-dev-ApiLambdaFunctionQualifiedArn"
+                    }
+                  },
+                  "ServiceEndpoint": {
+                    "Description": "URL of the service endpoint",
+                    "Value": {
+                      "Fn::Join": [
+                        "",
+                        [
+                          "https://",
+                          {
+                            "Ref": "ApiGatewayRestApi"
+                          },
+                          ".execute-api.",
+                          {
+                            "Ref": "AWS::Region"
+                          },
+                          ".",
+                          {
+                            "Ref": "AWS::URLSuffix"
+                          },
+                          "/dev"
+                        ]
+                      ]
+                    },
+                    "Export": {
+                      "Name": "sls-go-api-serverless-v10-dev-ServiceEndpoint"
+                    }
+                  }
+                }
+              },
+              "vpc": {}
+            },
+            "package": {
+              "include": [
+                "bootstrap"
+              ],
+              "artifactsS3KeyDirname": "serverless/go-api-serverless-v10/dev/code-artifacts",
+              "deploymentBucket": "serverless-framework-deployments-us-east-1-3f8afd83-b182",
+              "artifact": "/workspaces/csw24-grupoG-ticket-gin/.serverless/go-api-serverless-v10.zip",
+              "artifactDirectoryName": "serverless/go-api-serverless-v10/dev/1732055255225-2024-11-19T22:27:35.225Z"
+            },
+            "functions": {
+              "api": {
+                "handler": "bootstrap",
+                "events": [
+                  {
+                    "http": {
+                      "path": "",
+                      "method": "any",
+                      "integration": "AWS_PROXY"
+                    }
+                  }
+                ],
+                "name": "go-api-serverless-v10-dev-api",
+                "package": {},
+                "memory": 1024,
+                "timeout": 6,
+                "runtime": "provided.al2023",
+                "vpc": {},
+                "versionLogicalId": "ApiLambdaVersion5Rs4na41HWexEXmdV7RUQB4Osxw6qfLQauXV9zYhA"
+              }
+            }
+          },
+          "configFileDirPath": "/workspaces/csw24-grupoG-ticket-gin",
+          "config": {
+            "type": "sls"
+          },
+          "options": {
+            "verbose": true
+          },
+          "stage": "dev",
+          "dashboard": null,
+          "logger": {
+            "namespace": "s:core:resolver:sls",
+            "prefix": null,
+            "prefixColor": null
+          },
+          "_credentialsPromise": "<REDACTED>"
+        },
+        "resolvers": {}
+      }
+    },
+    "composeServiceName": null,
+    "servicePath": "/workspaces/csw24-grupoG-ticket-gin",
+    "serviceConfigFileName": "serverless.yml",
+    "service": {
+      "service": "go-api-serverless-v10",
+      "provider": {
+        "name": "aws",
+        "runtime": "provided.al2023",
+        "region": "us-east-1",
+        "role": "arn:aws:iam::379175286351:role/LabRole",
+        "environment": {
+          "DB_HOST": "rds-t1.cttyfnhps03u.us-east-1.rds.amazonaws.com",
+          "DB_USER": "postgres",
+          "DB_PASSWORD": "<REDACTED>",
+          "DB_NAME": "postgres",
+          "DB_PORT": "5432",
+          "PGADMIN_PORT": "5050",
+          "WEB_PORT": "8080"
+        },
+        "stage": "dev",
+        "versionFunctions": true,
+        "compiledCloudFormationTemplate": {
+          "AWSTemplateFormatVersion": "2010-09-09",
+          "Description": "The AWS CloudFormation template for this Serverless application",
+          "Resources": {
+            "ApiLogGroup": {
+              "Type": "AWS::Logs::LogGroup",
+              "Properties": {
+                "LogGroupName": "/aws/lambda/go-api-serverless-v10-dev-api"
+              }
+            },
+            "ApiLambdaFunction": {
+              "Type": "AWS::Lambda::Function",
+              "Properties": {
+                "Code": {
+                  "S3Bucket": "serverless-framework-deployments-us-east-1-3f8afd83-b182",
+                  "S3Key": "serverless/go-api-serverless-v10/dev/1732055255225-2024-11-19T22:27:35.225Z/go-api-serverless-v10.zip"
+                },
+                "Handler": "bootstrap",
+                "Runtime": "provided.al2023",
+                "FunctionName": "go-api-serverless-v10-dev-api",
+                "MemorySize": 1024,
+                "Timeout": 6,
+                "Environment": {
+                  "Variables": {
+                    "DB_HOST": "rds-t1.cttyfnhps03u.us-east-1.rds.amazonaws.com",
+                    "DB_USER": "postgres",
+                    "DB_PASSWORD": "<REDACTED>",
+                    "DB_NAME": "postgres",
+                    "DB_PORT": "5432",
+                    "PGADMIN_PORT": "5050",
+                    "WEB_PORT": "8080"
+                  }
+                },
+                "Role": "arn:aws:iam::379175286351:role/LabRole"
+              },
+              "DependsOn": [
+                "ApiLogGroup"
+              ]
+            },
+            "ApiLambdaVersion5Rs4na41HWexEXmdV7RUQB4Osxw6qfLQauXV9zYhA": {
+              "Type": "AWS::Lambda::Version",
+              "DeletionPolicy": "Retain",
+              "Properties": {
+                "FunctionName": {
+                  "Ref": "ApiLambdaFunction"
+                },
+                "CodeSha256": "9O7c6uHI1m7a4m58uz6Iz6ScIjlBHh8kuiHj3BmBwkc="
+              }
+            },
+            "ApiGatewayRestApi": {
+              "Type": "AWS::ApiGateway::RestApi",
+              "Properties": {
+                "Name": "dev-go-api-serverless-v10",
+                "EndpointConfiguration": {
+                  "Types": [
+                    "EDGE"
+                  ]
+                },
+                "Policy": ""
+              }
+            },
+            "ApiGatewayMethodAny": {
+              "Type": "AWS::ApiGateway::Method",
+              "Properties": {
+                "HttpMethod": "ANY",
+                "RequestParameters": {},
+                "ResourceId": {
+                  "Fn::GetAtt": [
+                    "ApiGatewayRestApi",
+                    "RootResourceId"
+                  ]
+                },
+                "RestApiId": {
+                  "Ref": "ApiGatewayRestApi"
+                },
+                "ApiKeyRequired": "<REDACTED>",
+                "AuthorizationType": "NONE",
+                "Integration": {
+                  "IntegrationHttpMethod": "POST",
+                  "Type": "AWS_PROXY",
+                  "Uri": {
+                    "Fn::Join": [
+                      "",
+                      [
+                        "arn:",
+                        {
+                          "Ref": "AWS::Partition"
+                        },
+                        ":apigateway:",
+                        {
+                          "Ref": "AWS::Region"
+                        },
+                        ":lambda:path/2015-03-31/functions/",
+                        {
+                          "Fn::GetAtt": [
+                            "ApiLambdaFunction",
+                            "Arn"
+                          ]
+                        },
+                        "/invocations"
+                      ]
+                    ]
+                  }
+                },
+                "MethodResponses": []
+              },
+              "DependsOn": [
+                "ApiLambdaPermissionApiGateway"
+              ]
+            },
+            "ApiGatewayDeployment1732055250028": {
+              "Type": "AWS::ApiGateway::Deployment",
+              "Properties": {
+                "RestApiId": {
+                  "Ref": "ApiGatewayRestApi"
+                },
+                "StageName": "dev"
+              },
+              "DependsOn": [
+                "ApiGatewayMethodAny"
+              ]
+            },
+            "ApiLambdaPermissionApiGateway": {
+              "Type": "AWS::Lambda::Permission",
+              "Properties": {
+                "FunctionName": {
+                  "Fn::GetAtt": [
+                    "ApiLambdaFunction",
+                    "Arn"
+                  ]
+                },
+                "Action": "lambda:InvokeFunction",
+                "Principal": "apigateway.amazonaws.com",
+                "SourceArn": {
+                  "Fn::Join": [
+                    "",
+                    [
+                      "arn:",
+                      {
+                        "Ref": "AWS::Partition"
+                      },
+                      ":execute-api:",
+                      {
+                        "Ref": "AWS::Region"
+                      },
+                      ":",
+                      {
+                        "Ref": "AWS::AccountId"
+                      },
+                      ":",
+                      {
+                        "Ref": "ApiGatewayRestApi"
+                      },
+                      "/*/*"
+                    ]
+                  ]
+                }
+              }
+            }
+          },
+          "Outputs": {
+            "ServerlessDeploymentBucketName": {
+              "Value": "serverless-framework-deployments-us-east-1-3f8afd83-b182",
+              "Export": {
+                "Name": "sls-go-api-serverless-v10-dev-ServerlessDeploymentBucketName"
+              }
+            },
+            "ApiLambdaFunctionQualifiedArn": {
+              "Description": "Current Lambda function version",
+              "Value": {
+                "Ref": "ApiLambdaVersion5Rs4na41HWexEXmdV7RUQB4Osxw6qfLQauXV9zYhA"
+              },
+              "Export": {
+                "Name": "sls-go-api-serverless-v10-dev-ApiLambdaFunctionQualifiedArn"
+              }
+            },
+            "ServiceEndpoint": {
+              "Description": "URL of the service endpoint",
+              "Value": {
+                "Fn::Join": [
+                  "",
+                  [
+                    "https://",
+                    {
+                      "Ref": "ApiGatewayRestApi"
+                    },
+                    ".execute-api.",
+                    {
+                      "Ref": "AWS::Region"
+                    },
+                    ".",
+                    {
+                      "Ref": "AWS::URLSuffix"
+                    },
+                    "/dev"
+                  ]
+                ]
+              },
+              "Export": {
+                "Name": "sls-go-api-serverless-v10-dev-ServiceEndpoint"
+              }
+            }
+          }
+        },
+        "vpc": {}
+      },
+      "package": {
+        "include": [
+          "bootstrap"
+        ],
+        "artifactsS3KeyDirname": "serverless/go-api-serverless-v10/dev/code-artifacts",
+        "deploymentBucket": "serverless-framework-deployments-us-east-1-3f8afd83-b182",
+        "artifact": "/workspaces/csw24-grupoG-ticket-gin/.serverless/go-api-serverless-v10.zip",
+        "artifactDirectoryName": "serverless/go-api-serverless-v10/dev/1732055255225-2024-11-19T22:27:35.225Z"
+      },
+      "functions": {
+        "api": {
+          "handler": "bootstrap",
+          "events": [
+            {
+              "http": {
+                "path": "",
+                "method": "any",
+                "integration": "AWS_PROXY"
+              }
+            }
+          ],
+          "name": "go-api-serverless-v10-dev-api",
+          "package": {},
+          "memory": 1024,
+          "timeout": 6,
+          "runtime": "provided.al2023",
+          "vpc": {},
+          "versionLogicalId": "ApiLambdaVersion5Rs4na41HWexEXmdV7RUQB4Osxw6qfLQauXV9zYhA"
+        }
+      }
+    },
+    "serviceRawFile": "service: go-api-serverless-v10\n\nprovider:\n  name: aws\n  runtime: provided.al2023\n  region: us-east-1\n  role: arn:aws:iam::379175286351:role/LabRole # Substitua pelo ARN do seu Role\n\n  environment:\n    DB_HOST: rds-t1.cttyfnhps03u.us-east-1.rds.amazonaws.com\n    DB_USER: postgres\n    DB_PASSWORD: minhasenha123\n    DB_NAME: postgres\n    DB_PORT: 5432\n    PGADMIN_PORT: 5050\n    WEB_PORT: 8080\n\npackage:\n include:\n   - bootstrap\n   \nfunctions:\n  api:\n    handler: bootstrap\n    \t\n    events:\n      - http:\n          path: /\n          method: ANY\n",
+    "command": [
+      "deploy"
+    ],
+    "options": {
+      "verbose": true
+    },
+    "error": {
+      "message": "An error occurred: ApiLambdaFunction - Resource handler returned message: \"Lambda function go-api-serverless-v10-dev-api could not be found\" (RequestToken: 02cb363f-4d50-1626-850a-89faa97188cb, HandlerErrorCode: NotFound).",
+      "stack": "ServerlessError2: An error occurred: ApiLambdaFunction - Resource handler returned message: \"Lambda function go-api-serverless-v10-dev-api could not be found\" (RequestToken: 02cb363f-4d50-1626-850a-89faa97188cb, HandlerErrorCode: NotFound).\n    at file:///home/codespace/.serverless/releases/4.4.11/package/dist/sf-core.js:727:830\n    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)\n    at async AwsDeploy.update (file:///home/codespace/.serverless/releases/4.4.11/package/dist/sf-core.js:727:25455)\n    at async aws:deploy:deploy:updateStack (file:///home/codespace/.serverless/releases/4.4.11/package/dist/sf-core.js:738:6063)\n    at async PluginManager.runHooks (file:///home/codespace/.serverless/releases/4.4.11/package/dist/sf-core.js:925:9309)\n    at async PluginManager.invoke (file:///home/codespace/.serverless/releases/4.4.11/package/dist/sf-core.js:925:10080)\n    at async PluginManager.spawn (file:///home/codespace/.serverless/releases/4.4.11/package/dist/sf-core.js:925:10441)\n    at async PluginManager.runHooks (file:///home/codespace/.serverless/releases/4.4.11/package/dist/sf-core.js:925:9309)\n    at async PluginManager.invoke (file:///home/codespace/.serverless/releases/4.4.11/package/dist/sf-core.js:925:10080)\n    at async PluginManager.run (file:///home/codespace/.serverless/releases/4.4.11/package/dist/sf-core.js:925:10811)",
+      "code": "AWS_CLOUD_FORMATION_UPDATE_STACK_INTERNAL_LAMBDA_FUNCTION_UPDATE_FAILED"
+    },
+    "params": {},
+    "machineId": "20640fef659c97a7ed8e1181bfd9e285",
+    "stage": "dev",
+    "accessKeyV2": "<REDACTED>",
+    "accessKeyV1": "<REDACTED>",
+    "orgId": "5f8a7361-5fd1-4b51-a027-3c1b298f24f9",
+    "orgName": "csw2024",
+    "userId": "qW0nMwZRnntxCFvmzg",
+    "dashboard": {
+      "isEnabledForService": false,
+      "requiredAuthentication": false,
+      "orgFeaturesInUse": null,
+      "orgObservabilityIntegrations": null,
+      "serviceAppId": null,
+      "serviceProvider": null,
+      "instanceParameters": null
+    },
+    "userName": "csw2024",
+    "subscription": null,
+    "userEmail": "eduardo.agarcia117@gmail.com",
+    "serviceProviderAwsRegion": "us-east-1",
+    "serviceProviderAwsCredentials": "<REDACTED>",
+    "serviceProviderAwsAccountId": "379175286351",
+    "projectType": "traditional",
+    "versionSf": "4.4.11",
+    "serviceProviderAwsCfStackName": "go-api-serverless-v10-dev",
+    "serviceUniqueId": "arn:aws:cloudformation:us-east-1:379175286351:stack/go-api-serverless-v10-dev/36465560-a6c2-11ef-8397-0affceca2edf",
+    "serviceProviderAwsCfStackId": "arn:aws:cloudformation:us-east-1:379175286351:stack/go-api-serverless-v10-dev/36465560-a6c2-11ef-8397-0affceca2edf",
+    "serviceProviderAwsCfStackCreated": "2024-11-19T22:04:13.748Z",
+    "serviceProviderAwsCfStackUpdated": "2024-11-19T22:27:37.987Z",
+    "serviceProviderAwsCfStackStatus": "UPDATE_ROLLBACK_COMPLETE",
+    "serviceProviderAwsCfStackOutputs": [
+      {
+        "OutputKey": "ApiLambdaFunctionQualifiedArn",
+        "OutputValue": "arn:aws:lambda:us-east-1:379175286351:function:go-api-serverless-v10-dev-api:6",
+        "Description": "Current Lambda function version",
+        "ExportName": "sls-go-api-serverless-v10-dev-ApiLambdaFunctionQualifiedArn"
+      },
+      {
+        "OutputKey": "ServiceEndpoint",
+        "OutputValue": "https://7bltb0qm27.execute-api.us-east-1.amazonaws.com/dev",
+        "Description": "URL of the service endpoint",
+        "ExportName": "sls-go-api-serverless-v10-dev-ServiceEndpoint"
+      },
+      {
+        "OutputKey": "ServerlessDeploymentBucketName",
+        "OutputValue": "serverless-framework-deployments-us-east-1-3f8afd83-b182",
+        "ExportName": "sls-go-api-serverless-v10-dev-ServerlessDeploymentBucketName"
+      }
+    ]
+  }
+}

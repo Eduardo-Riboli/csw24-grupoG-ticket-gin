@@ -1,5 +1,5 @@
 # Use uma imagem oficial como uma etapa de build
-FROM golang:1.21-bullseye AS builder
+FROM golang:1.22-bullseye AS builder
 
 # Definir o diretório de trabalho
 WORKDIR /app
