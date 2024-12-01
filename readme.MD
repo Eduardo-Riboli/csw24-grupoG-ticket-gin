@@ -18,19 +18,18 @@ Trabalho da disciplina de construção de software da PUCRS 2024/2
 ## Project structure
 
 ```bash
-├── configs
 ├── .github
-├── assets
-├── configs
-├── controllers
-├── docs
-├── entities
-├── infra
-├── models
-├── repositories
-├── routes
-├── services
-├── utils
+├── assets/
+├── configs/
+├── controllers/
+├── docs/
+├── entities/
+├── infra/
+├── models/
+├── repositories/
+├── routes/
+├── services/
+├── utils/
 ├── .env.example 
 ├── .gitignore
 ├── docker-compose.yaml 
@@ -64,6 +63,8 @@ Trabalho da disciplina de construção de software da PUCRS 2024/2
 ## How to run
 
 ### Dev
+
+change the name of the `.env.example` file to only `.env` and run the following command
 
 ```bash
 docker compose up --build
