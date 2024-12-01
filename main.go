@@ -1,30 +1,18 @@
 package main
 
 import (
-	"log"
-
-	"github.com/grupoG/csw24-grupoG-ticket-gin/configs"
-	"github.com/grupoG/csw24-grupoG-ticket-gin/controllers"
-	"github.com/grupoG/csw24-grupoG-ticket-gin/docs" // Adicione essa linha para importar o pacote docs
-	"github.com/grupoG/csw24-grupoG-ticket-gin/repositories"
-	"github.com/grupoG/csw24-grupoG-ticket-gin/routes"
-	"github.com/grupoG/csw24-grupoG-ticket-gin/services"
-	swaggerFiles "github.com/swaggo/files"
-	ginSwagger "github.com/swaggo/gin-swagger"
-
-	"context"
-
-	"github.com/aws/aws-lambda-go/events"
-	"github.com/aws/aws-lambda-go/lambda"
-	ginadapter "github.com/awslabs/aws-lambda-go-api-proxy/gin"
+    "github.com/grupoG/csw24-grupoG-ticket-gin/configs"
+    "github.com/grupoG/csw24-grupoG-ticket-gin/controllers"
+    _ "github.com/grupoG/csw24-grupoG-ticket-gin/docs"
+    "github.com/grupoG/csw24-grupoG-ticket-gin/repositories"
+    "github.com/grupoG/csw24-grupoG-ticket-gin/routes"
+    "github.com/grupoG/csw24-grupoG-ticket-gin/services"
+    swaggerFiles "github.com/swaggo/files"
+    ginSwagger "github.com/swaggo/gin-swagger"
+    "github.com/grupoG/csw24-grupoG-ticket-gin/docs" // Adicione essa linha para importar o pacote docs
 )
 
-var ginLambda *ginadapter.GinLambda
-
-func init() {
-    // stdout and stderr are sent to AWS CloudWatch Logs
-    log.Printf("Gin cold start")
-
+func main() {
     // Configurar o banco de dados
     db := configs.SetupDatabase()
 
@@ -52,12 +40,12 @@ func init() {
     notificationPreferencesController := controllers.NewNotificationPreferencesController(notificationPreferencesService)
 
     // Configurar as rotas
-    router := routes.SetupRouter(sampleController,
-        tenantController,
-        userController,
-        eventController,
-        ticketController,
-        transactionController,
+    router := routes.SetupRouter(sampleController, 
+        tenantController, 
+        userController, 
+        eventController, 
+        ticketController, 
+        transactionController, 
         notificationPreferencesController)
 
     docs.SwaggerInfo.BasePath = "/api" // Acessar a variável BasePath corretamente
@@ -65,13 +53,6 @@ func init() {
     router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
     router.POST("/tickets/sell", ticketController.SellTicket)
 
-    ginLambda = ginadapter.New(router)
-}
-
-func Handler(ctx context.Context, req events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
-    return ginLambda.ProxyWithContext(ctx, req)
-}
-
-func main() {
-    lambda.Start(Handler)
+    // Iniciar o servidor
+    router.Run(":8080")
 }

@@ -84,12 +84,6 @@ OBS: Muito cuidado para não perder o arquivo .pem!
 
 ![Diagrama do banco de dados](./assets/DB_diagram.png)
 
-## How to run build V in EC2
-
-```bash
-docker run --env-file .env -p 8080:8080 csw24-grupog-ticket-gin-web
-```
-
 ## To do's
 
 - [ X ] Criar estrutura do projeto
