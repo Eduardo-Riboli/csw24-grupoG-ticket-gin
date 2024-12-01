@@ -4,13 +4,15 @@ Trabalho da disciplina de construção de software da PUCRS 2024/2
 
 ## Project Stack
 
-- REST API
-- Golang
-- Gin
-- PostgreSQL
-- Swagger
-- Terraform
-- AWS
+- [Webserver](https://en.wikipedia.org/wiki/Web_server)
+- [REST API](https://www.ibm.com/docs/pt-br/control-desk/7.6.1.2?topic=apis-rest-api)
+- [Golang](https://go.dev/)
+- [Gin](https://gin-gonic.com/)
+- [PostgreSQL](https://www.postgresql.org/)
+- [Swagger](https://swagger.io/)
+- [Terraform](https://www.terraform.io/)
+- [AWS](https://aws.amazon.com/pt/free/?trk=2ee11bb2-bc40-4546-9852-2c4ad8e8f646&sc_channel=ps&ef_id=Cj0KCQiAr7C6BhDRARIsAOUKifjgcWxY_Ljh_rcX5QbxmL6IYOXSmDnyjE8_LbBNHfWIO946Vm6SIY8aAjMQEALw_wcB:G:s&s_kwcid=AL!4422!3!696214219377!e!!g!!aws!15278604629!130587771740&gclid=Cj0KCQiAr7C6BhDRARIsAOUKifjgcWxY_Ljh_rcX5QbxmL6IYOXSmDnyjE8_LbBNHfWIO946Vm6SIY8aAjMQEALw_wcB&all-free-tier.sort-by=item.additionalFields.SortRank&all-free-tier.sort-order=asc&awsf.Free%20Tier%20Types=*all&awsf.Free%20Tier%20Categories=*all)
+
 
 
 ## Project structure
@@ -63,7 +65,20 @@ Trabalho da disciplina de construção de software da PUCRS 2024/2
 
 ### Dev
 
+```bash
+docker compose up --build
+```
+
+this command will create 3 containers:
+- one in localhost:8080 which is the go API
+- one in localhost:5432 which is Postgres
+- one in localhost:5050 which is pgAdmin
+
 ### Prod
+
+to run the application in prod, you must change the databse conection string in the `configs/config.go` file and set `sslmode=require`
+
+and push it to the main repo, after that, an docker image is created and stored in a ECR inside AWS  to be deployed in a ECS
 
 ## Support team
 
