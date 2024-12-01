@@ -33,8 +33,8 @@ resource "aws_security_group" "ecs_security_group" {
   description = "Allow access to ECS containers"
 
   ingress {
-    from_port   = 3000
-    to_port     = 3000
+    from_port   = 8080
+    to_port     = 8080
     protocol    = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
   }
@@ -111,7 +111,8 @@ resource "aws_ecs_task_definition" "task_definition" {
   container_definitions = jsonencode([
     {
       name = "go-container"
-      image = "<AWS_ACCOUNT_ID>.dkr.ecr.us-east-1.amazonaws.com/nestjs-api"
+      image = "807496334534.dkr.ecr.us-east-1.amazonaws.com/t1-repository:b28ad98a3eeb5118ad7319a04a1e70ae533e0f1d"
+
       portMappings = [
         {
           containerPort = 8080
@@ -260,10 +261,10 @@ resource "aws_instance" "teste_t1" {
     EOF
 }
 
-# resource "aws_ecr_repository" "myRepository" {
-#   name                 = "t1-repository"  # Nome do seu repositório
-#   image_tag_mutability = "MUTABLE"            # Controla se as tags de imagem podem ser alteradas
-# }
+resource "aws_ecr_repository" "myRepository" {
+  name                 = "t1-repository"  # Nome do seu repositório
+  image_tag_mutability = "MUTABLE"            # Controla se as tags de imagem podem ser alteradas
+}
 
 
 resource "aws_security_group" "api_access" {
